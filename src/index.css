@@ -1,0 +1,180 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-black text-white;
+}
+
+/* Glass morphism styles */
+@layer components {
+  .glass-card {
+    @apply bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl shadow-2xl;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02));
+    backdrop-filter: blur(20px);
+    box-shadow: 
+      0 20px 40px rgba(0, 0, 0, 0.3),
+      0 0 0 1px rgba(255, 255, 255, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+
+  .glass-card:hover {
+    box-shadow: 
+      0 25px 50px rgba(0, 0, 0, 0.4),
+      0 0 0 1px rgba(255, 255, 255, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  }
+}
+
+/* Custom animations */
+@keyframes expand-ring {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.6;
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(59, 130, 246, 0.8);
+  }
+}
+
+.animate-expand-ring {
+  animation: expand-ring 2s ease-out forwards;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Custom slider styles */
+.slider::-webkit-slider-thumb {
+  @apply appearance-none w-6 h-6 rounded-full bg-gradient-to-r from-blue-400 to-purple-400 cursor-pointer shadow-lg;
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+}
+
+.slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 25px rgba(59, 130, 246, 0.8);
+  transform: scale(1.1);
+}
+
+.slider::-moz-range-thumb {
+  @apply w-6 h-6 rounded-full bg-gradient-to-r from-blue-400 to-purple-400 cursor-pointer border-0;
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gradient-to-b from-blue-500 to-purple-600 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply from-blue-400 to-purple-500;
+}
+
+/* Text glow effects */
+.text-glow {
+  text-shadow: 0 0 20px currentColor;
+}
+
+/* Animation delays */
+.animation-delay-1000 {
+  animation-delay: 1s;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-3000 {
+  animation-delay: 3s;
+}
+
+/* Backdrop filter fallback */
+@supports not (backdrop-filter: blur(20px)) {
+  .glass-card {
+    background: rgba(0, 0, 0, 0.8);
+  }
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .glass-card {
+    @apply backdrop-blur-md;
+  }
+}
+
+/* Custom HTML Globe Label */
+.city-label {
+  @apply text-sm text-cyan-200 bg-black/50 backdrop-blur-sm px-2 py-1 rounded-md border border-cyan-500/50 whitespace-nowrap;
+  transform: translate(-50%, 20px); /* Position below the dot */
+  transition: opacity 0.3s;
+}
+
+.city-label:hover {
+  @apply bg-cyan-900/50 border-cyan-400;
+}
+
+/* Hide labels when globe is far away */
+.labels-hidden .city-label {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Zone label positioning and overlap prevention */
+.zone-label {
+  pointer-events: none;
+  z-index: 1000;
+  text-shadow:
+    0 0 8px rgba(0, 0, 0, 0.8),
+    2px 2px 4px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  border-radius: 8px;
+  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  white-space: nowrap;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+/* Prevent text selection on interactive elements */
+.no-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Improved tab navigation */
+.tab-container {
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.tab-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* Text glow effect */
+.text-glow {
+  text-shadow: 0 0 10px currentColor;
+}
