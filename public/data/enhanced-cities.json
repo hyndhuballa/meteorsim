@@ -1,0 +1,262 @@
+[
+  {
+    "id": "nyc",
+    "name": "New York, USA",
+    "lat": 40.7128,
+    "lng": -74.0060,
+    "population": 8336817,
+    "metropolitanPopulation": 20140470,
+    "populationDensity": 10947,
+    "area": 783.8,
+    "elevation": 10,
+    "coastalCity": true,
+    "infrastructure": {
+      "buildings": 1084000,
+      "skyscrapers": 6486,
+      "hospitals": 62,
+      "schools": 1700,
+      "airports": 3,
+      "ports": 1,
+      "powerPlants": 12,
+      "bridges": 2027,
+      "subwayStations": 472
+    },
+    "economy": {
+      "gdp": 1770000000000,
+      "majorIndustries": ["Finance", "Real Estate", "Technology", "Media"]
+    },
+    "geography": {
+      "terrain": "coastal_urban",
+      "waterBodies": ["Hudson River", "East River", "Atlantic Ocean"],
+      "tsunamiRisk": true
+    }
+  },
+  {
+    "id": "tok",
+    "name": "Tokyo, Japan",
+    "lat": 35.6762,
+    "lng": 139.6503,
+    "population": 13960000,
+    "metropolitanPopulation": 37435191,
+    "populationDensity": 6349,
+    "area": 2194,
+    "elevation": 40,
+    "coastalCity": true,
+    "infrastructure": {
+      "buildings": 2100000,
+      "skyscrapers": 556,
+      "hospitals": 650,
+      "schools": 4200,
+      "airports": 2,
+      "ports": 1,
+      "powerPlants": 18,
+      "bridges": 1200,
+      "subwayStations": 285
+    },
+    "economy": {
+      "gdp": 1520000000000,
+      "majorIndustries": ["Technology", "Finance", "Manufacturing", "Automotive"]
+    },
+    "geography": {
+      "terrain": "coastal_urban",
+      "waterBodies": ["Tokyo Bay", "Sumida River"],
+      "tsunamiRisk": true,
+      "earthquakeRisk": true
+    }
+  },
+  {
+    "id": "del",
+    "name": "New Delhi, India",
+    "lat": 28.6139,
+    "lng": 77.2090,
+    "population": 16787941,
+    "metropolitanPopulation": 32900000,
+    "populationDensity": 11320,
+    "area": 1484,
+    "elevation": 216,
+    "coastalCity": false,
+    "infrastructure": {
+      "buildings": 3200000,
+      "skyscrapers": 89,
+      "hospitals": 180,
+      "schools": 2800,
+      "airports": 1,
+      "ports": 0,
+      "powerPlants": 8,
+      "bridges": 450,
+      "subwayStations": 250
+    },
+    "economy": {
+      "gdp": 370000000000,
+      "majorIndustries": ["Government", "Services", "Manufacturing", "IT"]
+    },
+    "geography": {
+      "terrain": "inland_urban",
+      "waterBodies": ["Yamuna River"],
+      "tsunamiRisk": false,
+      "airPollution": "severe"
+    }
+  },
+  {
+    "id": "ldn",
+    "name": "London, UK",
+    "lat": 51.5074,
+    "lng": -0.1278,
+    "population": 9304016,
+    "metropolitanPopulation": 15800000,
+    "populationDensity": 5666,
+    "area": 1572,
+    "elevation": 35,
+    "coastalCity": false,
+    "infrastructure": {
+      "buildings": 1800000,
+      "skyscrapers": 533,
+      "hospitals": 40,
+      "schools": 3000,
+      "airports": 6,
+      "ports": 1,
+      "powerPlants": 15,
+      "bridges": 200,
+      "subwayStations": 270
+    },
+    "economy": {
+      "gdp": 653000000000,
+      "majorIndustries": ["Finance", "Tourism", "Creative Industries", "Technology"]
+    },
+    "geography": {
+      "terrain": "river_urban",
+      "waterBodies": ["Thames River"],
+      "tsunamiRisk": false
+    }
+  },
+  {
+    "id": "par",
+    "name": "Paris, France",
+    "lat": 48.8566,
+    "lng": 2.3522,
+    "population": 2161000,
+    "metropolitanPopulation": 12405426,
+    "populationDensity": 20169,
+    "area": 105.4,
+    "elevation": 35,
+    "coastalCity": false,
+    "infrastructure": {
+      "buildings": 850000,
+      "skyscrapers": 17,
+      "hospitals": 50,
+      "schools": 1200,
+      "airports": 3,
+      "ports": 0,
+      "powerPlants": 6,
+      "bridges": 37,
+      "subwayStations": 303
+    },
+    "economy": {
+      "gdp": 709000000000,
+      "majorIndustries": ["Tourism", "Fashion", "Finance", "Technology"]
+    },
+    "geography": {
+      "terrain": "river_urban",
+      "waterBodies": ["Seine River"],
+      "tsunamiRisk": false
+    }
+  },
+  {
+    "id": "bei",
+    "name": "Beijing, China",
+    "lat": 39.9042,
+    "lng": 116.4074,
+    "population": 21542000,
+    "metropolitanPopulation": 24900000,
+    "populationDensity": 1311,
+    "area": 16411,
+    "elevation": 43,
+    "coastalCity": false,
+    "infrastructure": {
+      "buildings": 4200000,
+      "skyscrapers": 200,
+      "hospitals": 280,
+      "schools": 3500,
+      "airports": 2,
+      "ports": 0,
+      "powerPlants": 25,
+      "bridges": 800,
+      "subwayStations": 428
+    },
+    "economy": {
+      "gdp": 610000000000,
+      "majorIndustries": ["Government", "Technology", "Manufacturing", "Finance"]
+    },
+    "geography": {
+      "terrain": "inland_urban",
+      "waterBodies": ["Yongding River"],
+      "tsunamiRisk": false,
+      "airPollution": "high"
+    }
+  },
+  {
+    "id": "mum",
+    "name": "Mumbai, India",
+    "lat": 19.0760,
+    "lng": 72.8777,
+    "population": 20411274,
+    "metropolitanPopulation": 25700000,
+    "populationDensity": 20482,
+    "area": 603,
+    "elevation": 14,
+    "coastalCity": true,
+    "infrastructure": {
+      "buildings": 3800000,
+      "skyscrapers": 956,
+      "hospitals": 120,
+      "schools": 2200,
+      "airports": 1,
+      "ports": 1,
+      "powerPlants": 12,
+      "bridges": 150,
+      "subwayStations": 12
+    },
+    "economy": {
+      "gdp": 310000000000,
+      "majorIndustries": ["Finance", "Entertainment", "Textiles", "Chemicals"]
+    },
+    "geography": {
+      "terrain": "coastal_urban",
+      "waterBodies": ["Arabian Sea", "Mithi River"],
+      "tsunamiRisk": true,
+      "monsoonRisk": true
+    }
+  },
+  {
+    "id": "sao",
+    "name": "São Paulo, Brazil",
+    "lat": -23.5505,
+    "lng": -46.6333,
+    "population": 12325232,
+    "metropolitanPopulation": 22430000,
+    "populationDensity": 7398,
+    "area": 1521,
+    "elevation": 760,
+    "coastalCity": false,
+    "infrastructure": {
+      "buildings": 2400000,
+      "skyscrapers": 5644,
+      "hospitals": 180,
+      "schools": 3200,
+      "airports": 3,
+      "ports": 0,
+      "powerPlants": 15,
+      "bridges": 300,
+      "subwayStations": 89
+    },
+    "economy": {
+      "gdp": 430000000000,
+      "majorIndustries": ["Manufacturing", "Finance", "Services", "Automotive"]
+    },
+    "geography": {
+      "terrain": "highland_urban",
+      "waterBodies": ["Tietê River", "Pinheiros River"],
+      "tsunamiRisk": false
+    }
+  }
+]

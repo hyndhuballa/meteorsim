@@ -1,0 +1,20 @@
+{
+  "cities": [
+    { "name": "New York", "lat": 40.7128, "lng": -74.0060, "population": 8336817 },
+    { "name": "Los Angeles", "lat": 34.0522, "lng": -118.2437, "population": 3979576 },
+    { "name": "London", "lat": 51.5074, "lng": -0.1278, "population": 9002488 },
+    { "name": "Tokyo", "lat": 35.6762, "lng": 139.6503, "population": 14094034 },
+    { "name": "Paris", "lat": 48.8566, "lng": 2.3522, "population": 2161000 },
+    { "name": "Sydney", "lat": -33.8688, "lng": 151.2093, "population": 5312163 },
+    { "name": "Moscow", "lat": 55.7558, "lng": 37.6176, "population": 12506468 },
+    { "name": "Mumbai", "lat": 19.0760, "lng": 72.8777, "population": 20411274 },
+    { "name": "São Paulo", "lat": -23.5505, "lng": -46.6333, "population": 12325232 },
+    { "name": "Cairo", "lat": 30.0444, "lng": 31.2357, "population": 20484965 }
+  ],
+  "asteroids": [
+    { "name": "Apophis", "size": 370, "velocity": 30.73 },
+    { "name": "Bennu", "size": 492, "velocity": 27.7 },
+    { "name": "Didymos", "size": 780, "velocity": 23.9 },
+    { "name": "Ryugu", "size": 900, "velocity": 26.3 }
+  ]
+}
