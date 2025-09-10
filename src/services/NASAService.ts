@@ -132,7 +132,9 @@ class NASAService {
   async simulateRealAsteroidImpact(
     asteroidId: string,
     lat: number,
-    lng: number
+    lng: number,
+    diameter?: number,
+    velocity?: number,
   ): Promise<ImpactSimulation> {
     try {
       const params = new URLSearchParams({
@@ -140,8 +142,10 @@ class NASAService {
         lat: lat.toString(),
         lng: lng.toString(),
       });
+      if (diameter) params.append('diameter', String(diameter));
+      if (velocity) params.append('velocity', String(velocity));
 
-      const response = await fetch(`${this.baseUrl}/impact/simulate?${params}`);
+      const response = await fetch(`${this.baseUrl}/impact/simulate-real?${params}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -150,6 +154,26 @@ class NASAService {
       console.error('Error simulating real asteroid impact:', error);
       throw error;
     }
+  }
+
+  async aiRiskAnalysis(city_id: string, asteroid_size: number) {
+    const response = await fetch(`${this.baseUrl}/ai/risk-analysis`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ city_id, asteroid_size })
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return response.json();
+  }
+
+  async aiMitigations(city_id: string, asteroid_size: number, velocity: number) {
+    const response = await fetch(`${this.baseUrl}/ai/mitigations`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ city_id, asteroid_size, velocity })
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return response.json();
   }
 
   async browseAsteroids(page: number = 0, size: number = 20): Promise<any> {

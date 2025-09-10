@@ -11,10 +11,28 @@ import {
   Wifi,
   WifiOff
 } from 'lucide-react';
-import { nasaService, NEOData, NEOStats } from '../services/NASAService';
+import { nasaService } from '../services/NASAService';
+
+// Matches backend /api/neo/hazardous payload
+interface HazardAsteroid {
+  id: string;
+  name: string;
+  diameter_m: number;
+  velocity_km_s: number;
+  miss_distance_km: number;
+  approach_date: string;
+  risk_score: number;
+  threat_level: string;
+}
+
+// Minimal stats used by the UI
+interface DisplayStats {
+  total_asteroids: number;
+  hazardous_asteroids: number;
+}
 
 interface RealTimeNEODashboardProps {
-  onAsteroidSelect?: (asteroid: NEOData) => void;
+  onAsteroidSelect?: (asteroid: any) => void;
   selectedCity?: { lat: number; lng: number; name: string } | null;
 }
 
@@ -22,12 +40,12 @@ const RealTimeNEODashboard: React.FC<RealTimeNEODashboardProps> = ({
   onAsteroidSelect,
   selectedCity
 }) => {
-  const [hazardousAsteroids, setHazardousAsteroids] = useState<NEOData[]>([]);
-  const [neoStats, setNeoStats] = useState<NEOStats | null>(null);
+  const [hazardousAsteroids, setHazardousAsteroids] = useState<HazardAsteroid[]>([]);
+  const [neoStats, setNeoStats] = useState<DisplayStats | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
-  const [selectedAsteroid, setSelectedAsteroid] = useState<NEOData | null>(null);
+  const [selectedAsteroid, setSelectedAsteroid] = useState<HazardAsteroid | null>(null);
 
   useEffect(() => {
     checkConnection();
@@ -55,8 +73,21 @@ const RealTimeNEODashboard: React.FC<RealTimeNEODashboardProps> = ({
         nasaService.getNEOStats()
       ]);
 
-      setHazardousAsteroids(hazardousData.asteroids.slice(0, 10)); // Top 10 most dangerous
-      setNeoStats(statsData);
+      // Backend returns { success, count, asteroids }
+      const list = Array.isArray(hazardousData?.asteroids) ? hazardousData.asteroids : [];
+      setHazardousAsteroids(list.slice(0, 10));
+
+      // Backend returns { success, statistics: { total_discovered, potentially_hazardous, ... } }
+      const stats = statsData?.statistics;
+      if (stats) {
+        setNeoStats({
+          total_asteroids: stats.total_discovered ?? 0,
+          hazardous_asteroids: stats.potentially_hazardous ?? 0,
+        });
+      } else {
+        setNeoStats(null);
+      }
+
       setLastUpdate(new Date());
       setIsConnected(true);
     } catch (error) {
@@ -67,12 +98,12 @@ const RealTimeNEODashboard: React.FC<RealTimeNEODashboardProps> = ({
     }
   };
 
-  const handleAsteroidClick = (asteroid: NEOData) => {
+  const handleAsteroidClick = (asteroid: HazardAsteroid) => {
     setSelectedAsteroid(asteroid);
-    onAsteroidSelect?.(asteroid);
+    onAsteroidSelect?.(asteroid as any);
   };
 
-  const simulateImpact = async (asteroid: NEOData) => {
+  const simulateImpact = async (asteroid: HazardAsteroid) => {
     if (!selectedCity) {
       alert('Please select a target city first');
       return;
@@ -82,12 +113,13 @@ const RealTimeNEODashboard: React.FC<RealTimeNEODashboardProps> = ({
       const simulation = await nasaService.simulateRealAsteroidImpact(
         asteroid.id,
         selectedCity.lat,
-        selectedCity.lng
+        selectedCity.lng,
+        asteroid.diameter_m,
+        asteroid.velocity_km_s
       );
       
-      // You can emit this data to the parent component or handle it here
       console.log('Impact simulation:', simulation);
-      alert(`Impact simulation complete! Energy: ${simulation.impact.energy_mt} MT`);
+      alert(`Impact simulation complete! Energy: ${simulation.simulation.impact.energy_mt.toFixed(2)} MT`);
     } catch (error) {
       console.error('Error simulating impact:', error);
       alert('Error running impact simulation');
@@ -177,11 +209,6 @@ const RealTimeNEODashboard: React.FC<RealTimeNEODashboardProps> = ({
           <AnimatePresence>
             {hazardousAsteroids.map((asteroid, index) => {
               const riskInfo = nasaService.getRiskLevel(asteroid.risk_score || 0);
-              const closeApproach = asteroid.close_approach_data?.[0];
-              const diameter = (
-                asteroid.estimated_diameter.meters.estimated_diameter_min +
-                asteroid.estimated_diameter.meters.estimated_diameter_max
-              ) / 2;
 
               return (
                 <motion.div
@@ -199,7 +226,7 @@ const RealTimeNEODashboard: React.FC<RealTimeNEODashboardProps> = ({
                   <div className="flex justify-between items-start mb-2">
                     <div className="flex-1">
                       <div className="font-medium text-white text-sm">
-                        {asteroid.name.replace(/[()]/g, '')}
+                        {asteroid.name?.replace?.(/[()]/g, '') || asteroid.name}
                       </div>
                       <div className="text-xs text-gray-400">
                         ID: {asteroid.id}
@@ -217,7 +244,7 @@ const RealTimeNEODashboard: React.FC<RealTimeNEODashboardProps> = ({
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div>
                       <span className="text-gray-400">Size: </span>
-                      <span className="text-white">{Math.round(diameter)}m</span>
+                      <span className="text-white">{Math.round(asteroid.diameter_m)}m</span>
                     </div>
                     <div>
                       <span className="text-gray-400">Risk: </span>
@@ -225,19 +252,17 @@ const RealTimeNEODashboard: React.FC<RealTimeNEODashboardProps> = ({
                     </div>
                   </div>
 
-                  {closeApproach && (
-                    <div className="mt-2 text-xs">
-                      <div className="flex items-center gap-1 text-gray-300">
-                        <Clock className="w-3 h-3" />
-                        <span>
-                          {nasaService.calculateTimeToImpact(closeApproach.close_approach_date)}
-                        </span>
-                      </div>
-                      <div className="text-gray-400">
-                        Distance: {nasaService.formatDistance(closeApproach.miss_distance.kilometers)}
-                      </div>
+                  <div className="mt-2 text-xs">
+                    <div className="flex items-center gap-1 text-gray-300">
+                      <Clock className="w-3 h-3" />
+                      <span>
+                        {nasaService.calculateTimeToImpact(asteroid.approach_date)}
+                      </span>
                     </div>
-                  )}
+                    <div className="text-gray-400">
+                      Distance: {Math.round(asteroid.miss_distance_km).toLocaleString()} km
+                    </div>
+                  </div>
 
                   {selectedAsteroid?.id === asteroid.id && selectedCity && (
                     <motion.div
@@ -248,7 +273,7 @@ const RealTimeNEODashboard: React.FC<RealTimeNEODashboardProps> = ({
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          simulateImpact(asteroid);
+                          simulateImpact(asteroid as any);
                         }}
                         className="w-full py-2 bg-gradient-to-r from-red-600 to-orange-600 rounded-lg text-white text-sm font-medium hover:scale-105 transition-transform flex items-center justify-center gap-2"
                       >

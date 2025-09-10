@@ -8,6 +8,8 @@ import RealTimeNEODashboard from "./components/RealTimeNEODashboard";
 import TimeLapseSimulation from "./components/TimeLapseSimulation";
 import AftermathVisualization from "./components/AftermathVisualization";
 import CityRiskAnalyzer from "./components/CityRiskAnalyzer";
+import SurvivalProbabilityZones from "./components/SurvivalProbabilityZones";
+import GlobalAlertSystem from "./components/GlobalAlertSystem";
 import { NEOData } from "./services/NASAService";
 
 /**
@@ -272,7 +274,7 @@ const App: React.FC = () => {
   const [useRealAsteroid, setUseRealAsteroid] = useState<boolean>(false);
 
   // Advanced visualization state
-  const [activeTab, setActiveTab] = useState<'neo' | 'consequences' | 'timeline' | 'aftermath' | 'risk'>('neo');
+  const [activeTab, setActiveTab] = useState<'neo' | 'consequences' | 'timeline' | 'aftermath' | 'risk' | 'survival' | 'alerts'>('neo');
   const [currentTimePhase, setCurrentTimePhase] = useState<string>('impact');
   const [timelineProgress, setTimelineProgress] = useState<number>(0);
 
@@ -408,58 +410,50 @@ const App: React.FC = () => {
             {/* Right Column - Combined Data Panels */}
             <div className="xl:col-span-1">
               <div className="h-[600px] flex flex-col glass-card p-4">
-                {/* Tab Navigation */}
-                <div className="border-b border-gray-600 mb-4">
-                  <div className="flex flex-wrap gap-1 tab-container">
+                {/* Enhanced Tab Navigation */}
+                <div className="border-b border-gray-600 mb-3">
+                  <div className="flex tab-container">
                     <button
                       onClick={() => setActiveTab('neo')}
-                      className={`px-2 py-2 text-xs font-medium transition-colors whitespace-nowrap ${
-                        activeTab === 'neo'
-                          ? 'text-blue-400 border-b-2 border-blue-400'
-                          : 'text-gray-400 hover:text-white'
-                      }`}
+                      className={`compact-tab ${activeTab === 'neo' ? 'active' : ''}`}
                     >
                       NEOs
                     </button>
                     <button
                       onClick={() => setActiveTab('consequences')}
-                      className={`px-2 py-2 text-xs font-medium transition-colors whitespace-nowrap ${
-                        activeTab === 'consequences'
-                          ? 'text-blue-400 border-b-2 border-blue-400'
-                          : 'text-gray-400 hover:text-white'
-                      }`}
+                      className={`compact-tab ${activeTab === 'consequences' ? 'active' : ''}`}
                     >
-                      Analysis
+                      Impact
                     </button>
                     <button
                       onClick={() => setActiveTab('timeline')}
-                      className={`px-2 py-2 text-xs font-medium transition-colors whitespace-nowrap ${
-                        activeTab === 'timeline'
-                          ? 'text-blue-400 border-b-2 border-blue-400'
-                          : 'text-gray-400 hover:text-white'
-                      }`}
+                      className={`compact-tab ${activeTab === 'timeline' ? 'active' : ''}`}
                     >
                       Timeline
                     </button>
                     <button
                       onClick={() => setActiveTab('aftermath')}
-                      className={`px-2 py-2 text-xs font-medium transition-colors whitespace-nowrap ${
-                        activeTab === 'aftermath'
-                          ? 'text-blue-400 border-b-2 border-blue-400'
-                          : 'text-gray-400 hover:text-white'
-                      }`}
+                      className={`compact-tab ${activeTab === 'aftermath' ? 'active' : ''}`}
                     >
-                      Aftermath
+                      Effects
                     </button>
                     <button
                       onClick={() => setActiveTab('risk')}
-                      className={`px-2 py-2 text-xs font-medium transition-colors whitespace-nowrap ${
-                        activeTab === 'risk'
-                          ? 'text-blue-400 border-b-2 border-blue-400'
-                          : 'text-gray-400 hover:text-white'
-                      }`}
+                      className={`compact-tab ${activeTab === 'risk' ? 'active' : ''}`}
                     >
                       AI Risk
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('survival')}
+                      className={`compact-tab ${activeTab === 'survival' ? 'active' : ''}`}
+                    >
+                      Survival
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('alerts')}
+                      className={`compact-tab ${activeTab === 'alerts' ? 'active' : ''}`}
+                    >
+                      Alerts
                     </button>
                   </div>
                 </div>
@@ -527,6 +521,28 @@ const App: React.FC = () => {
                       cities={cities}
                       selectedCity={selectedCity}
                       onCitySelect={setSelectedCity}
+                    />
+                  )}
+
+                  {activeTab === 'survival' && (
+                    <SurvivalProbabilityZones
+                      selectedCity={selectedCity}
+                      impactData={lastResult}
+                      isActive={!!lastResult}
+                      onZoneSelect={(zone) => {
+                        console.log('Selected survival zone:', zone);
+                      }}
+                    />
+                  )}
+
+                  {activeTab === 'alerts' && (
+                    <GlobalAlertSystem
+                      isActive={!!selectedCity}
+                      impactLocation={selectedCity}
+                      asteroidData={{ size: asteroidSize, velocity }}
+                      onPhaseChange={(phase) => {
+                        console.log('Alert phase changed:', phase);
+                      }}
                     />
                   )}
                 </div>

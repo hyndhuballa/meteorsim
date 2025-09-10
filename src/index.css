@@ -168,10 +168,66 @@ body {
   overflow-x: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  min-height: 40px;
 }
 
 .tab-container::-webkit-scrollbar {
   display: none;
+}
+
+/* Compact tab styling */
+.compact-tab {
+  font-size: 10px;
+  padding: 4px 6px;
+  min-width: 45px;
+  text-align: center;
+  border-radius: 3px 3px 0 0;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.compact-tab:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.compact-tab.active {
+  background-color: rgba(59, 130, 246, 0.2);
+  border-bottom: 2px solid #3b82f6;
+}
+
+/* Enhanced glass card for better visual hierarchy */
+.glass-card-enhanced {
+  @apply bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl shadow-2xl;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.03));
+  backdrop-filter: blur(25px);
+  box-shadow:
+    0 25px 50px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+/* Asteroid animation enhancements */
+.asteroid-trail {
+  filter: drop-shadow(0 0 10px rgba(255, 100, 0, 0.8));
+}
+
+/* Impact zone styling */
+.impact-zone {
+  animation: pulse-impact 2s infinite;
+}
+
+@keyframes pulse-impact {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.05);
+  }
 }
 
 /* Text glow effect */
