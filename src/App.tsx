@@ -11,6 +11,8 @@ import CityRiskAnalyzer from "./components/CityRiskAnalyzer";
 import SurvivalProbabilityZones from "./components/SurvivalProbabilityZones";
 import GlobalAlertSystem from "./components/GlobalAlertSystem";
 import { NEOData } from "./services/NASAService";
+import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
+import NasaEyesEmbed from "./components/NasaEyesEmbed";
 
 /**
  * Simple types
@@ -226,10 +228,26 @@ const ResultStatCard: React.FC<{ icon: ReactNode; label: string; value: string |
   </div>
 );
 
+const Landing: React.FC = () => {
+  const navigate = useNavigate();
+  return (
+    <div className="min-h-screen text-white overflow-x-hidden">
+      <StarField />
+      <LandingPage
+        onEnterApp={() => {
+          setTimeout(() => navigate('/simulation'), 300);
+        }}
+      />
+    </div>
+  );
+};
+
+const EarthView: React.FC = () => <NasaEyesEmbed slug="earth" />;
+
 /**
  * ======== Main App ========
  */
-const App: React.FC = () => {
+const MainApp: React.FC = () => {
   // Inject animation styles for the globe blast effect
   // This is a quick way to ensure styles are available.
   // In a larger app, this would go in a global CSS file like `index.css`.
@@ -249,8 +267,7 @@ const App: React.FC = () => {
     }
   `;
 
-  // Landing state
-  const [showLanding, setShowLanding] = useState<boolean>(true);
+  const navigate = useNavigate();
 
   // Simulation inputs
   const [cities] = useState<City[]>(sampleCities);
@@ -315,21 +332,6 @@ const App: React.FC = () => {
     }, 1400);
   }
 
-  // If landing shown — render landing
-  if (showLanding) {
-    return (
-      <div className="min-h-screen text-white overflow-x-hidden">
-        <StarField />
-        <LandingPage
-          onEnterApp={() => {
-            // hide landing after a short cinematic delay
-            setTimeout(() => setShowLanding(false), 300);
-          }}
-        />
-      </div>
-    );
-  }
-
   // Main app UI
   return (
     <div className="min-h-screen text-white overflow-x-hidden relative">
@@ -342,7 +344,7 @@ const App: React.FC = () => {
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center justify-between mb-4">
               <button
-                onClick={() => setShowLanding(true)}
+                onClick={() => navigate('/')}
                 className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-full transition-all duration-300 backdrop-blur-sm border border-white/20"
               >
                 <ArrowLeft className="w-4 h-4" />
@@ -356,6 +358,12 @@ const App: React.FC = () => {
                 <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-red-400 via-orange-400 to-yellow-400 bg-clip-text text-transparent">
                   Meteor Impact Simulator
                 </h1>
+                {/* <button
+                  onClick={() => navigate('/earth')}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-full text-white font-medium transition-colors"
+                >
+                  Interactive 3D Earth
+                </button> */}
               </div>
 
               <div className="w-32" /> {/* spacer */}
@@ -619,6 +627,18 @@ const App: React.FC = () => {
         </footer>
       </>
     </div>
+  );
+};
+
+const App: React.FC = () => {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/simulation" element={<MainApp />} />
+        <Route path="/earth" element={<EarthView />} />
+      </Routes>
+    </Router>
   );
 };
 

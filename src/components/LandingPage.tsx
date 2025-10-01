@@ -1,4 +1,6 @@
-import React from 'react';
+import React from "react";
+import { useNavigate } from "react-router-dom"; 
+import NasaEyesEmbed from "./NasaEyesEmbed"; 
 import {
   Zap,
   Globe,
@@ -18,6 +20,7 @@ interface LandingPageProps {
 }
 
 const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
       {/* Hero Section */}
@@ -54,10 +57,36 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
 
           {/* Primary Features */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            <div className="glass-card p-6 hover:scale-105 transition-transform duration-300">
+            {/* <div className="glass-card p-6 hover:scale-105 transition-transform duration-300">
               <Globe className="w-12 h-12 text-blue-400 mx-auto mb-4" />
               <h4 className="text-xl font-bold text-white mb-2">Interactive 3D Earth</h4>
               <p className="text-gray-300 text-sm">Rotate and explore our planet with realistic impact visualizations and population heatmaps</p>
+            </div> */}
+            {/* <div className="glass-card p-6 hover:scale-105 transition-transform duration-300">
+      <Globe className="w-12 h-12 text-blue-400 mx-auto mb-4" />
+      <h4 className="text-xl font-bold text-white mb-2">Interactive 3D Earth</h4>
+      <p className="text-gray-300 text-sm">
+        Rotate and explore our planet with realistic impact visualizations and population heatmaps
+      </p>
+      <button
+        onClick={() => navigate("/earth")}
+        className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-full text-white font-medium transition-colors"
+      >
+        Open 3D Earth
+      </button>
+    </div> */}
+            <div className="glass-card p-6 hover:scale-105 transition-transform duration-300">
+              <Globe className="w-12 h-12 text-blue-400 mx-auto mb-4" />
+              <h4 className="text-xl font-bold text-white mb-2">Interactive 3D Earth</h4>
+              <p className="text-gray-300 text-sm">
+                Rotate and explore our planet with realistic impact visualizations and population heatmaps
+              </p>
+              <button
+                onClick={() => navigate("/earth")} 
+                className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-full text-white font-medium transition-colors"
+              >
+                Open 3D Earth
+              </button>
             </div>
 
             <div className="glass-card p-6 hover:scale-105 transition-transform duration-300">
