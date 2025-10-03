@@ -1,5 +1,6 @@
 // src/pages/ScientificPhysics.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import TutorialButton from "../components/TutorialButton";
 
 interface Formula {
   id: string;
@@ -10,6 +11,35 @@ interface Formula {
   inputs: { label: string; name: string; placeholder: string }[];
   calculate: (values: Record<string, number>) => number | string;
 }
+
+interface PageIntroModalProps {
+  title: string;
+  descriptionLines: string[];
+  onClose: () => void;
+}
+
+const PageIntroModal: React.FC<PageIntroModalProps> = ({ title, descriptionLines, onClose }) => {
+  return (
+    <div className="fixed inset-0 z-[10000] bg-black bg-opacity-70 flex items-center justify-center p-4">
+      <div className="bg-gray-900 rounded-lg p-6 max-w-lg w-full text-white relative">
+        <h2 className="text-3xl font-bold mb-4">{title}</h2>
+        {descriptionLines.map((line, i) => (
+          <p key={i} className="mb-3 leading-relaxed text-lg">
+            {line}
+          </p>
+        ))}
+
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 text-white bg-red-600 hover:bg-red-700 rounded-full w-9 h-9 flex items-center justify-center font-bold text-xl leading-none focus:outline-none"
+          aria-label="Close intro dialog"
+        >
+          &times;
+        </button>
+      </div>
+    </div>
+  );
+};
 
 // ✅ Full formula list
 const formulas: Formula[] = [
@@ -100,6 +130,21 @@ const formulas: Formula[] = [
 const ScientificPhysics: React.FC = () => {
   const [values, setValues] = useState<Record<string, number>>({});
   const [results, setResults] = useState<Record<string, number | string>>({});
+  const [showIntro, setShowIntro] = useState(false);
+
+  useEffect(() => {
+    const dismissed = localStorage.getItem("scientificPhysicsIntroDismissed");
+    if (!dismissed) {
+      setShowIntro(true);
+    }
+  }, []);
+
+  const closeIntro = () => {
+    localStorage.setItem("scientificPhysicsIntroDismissed", "yes");
+    setShowIntro(false);
+  };
+
+  const openIntro = () => setShowIntro(true);
 
   const handleChange = (id: string, name: string, val: string) => {
     setValues({ ...values, [`${id}_${name}`]: parseFloat(val) || 0 });
@@ -115,58 +160,73 @@ const ScientificPhysics: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-black to-gray-950 text-white px-6 py-10">
-      <h1 className="text-4xl font-extrabold text-center mb-10 text-cyan-400 drop-shadow-lg">
-        ⚡ Scientific Physics Lab
-      </h1>
+    <>
+      {showIntro && (
+        <PageIntroModal
+          title="Scientific Physics Lab"
+          descriptionLines={[
+            "Enter values, run calculations, and see real-world physics in action.",
+          ]}
+          onClose={closeIntro}
+        />
+      )}
 
-      <div className="grid lg:grid-cols-2 gap-8">
-        {formulas.map((f) => (
-          <div
-            key={f.id}
-            className="bg-gray-800/70 backdrop-blur-md rounded-2xl shadow-lg p-6 border border-gray-700 hover:shadow-2xl hover:scale-[1.02] transition-transform"
-          >
-            <h2 className="text-xl font-bold mb-2 text-blue-400">{f.title}</h2>
-            <p className="italic text-sm text-gray-300 mb-2">
-              Formula: <span className="text-yellow-300">{f.formula}</span>
-            </p>
-            <p className="mb-2 text-gray-200">{f.explanation}</p>
-            <p className="mb-4 text-gray-400 text-sm">Example: {f.example}</p>
+      {/* Floating Tutorial Button */}
+      {!showIntro && <TutorialButton onClick={openIntro} />}
 
-            <div className="grid sm:grid-cols-2 gap-4 mb-4">
-              {f.inputs.map((inp) => (
-                <div key={inp.name}>
-                  <label className="block text-xs text-gray-400 mb-1">
-                    {inp.label}
-                  </label>
-                  <input
-                    type="number"
-                    placeholder={inp.placeholder}
-                    className="w-full px-3 py-2 rounded-md bg-gray-900 text-white border border-gray-600 focus:border-blue-400 focus:ring-1 focus:ring-blue-400 outline-none"
-                    onChange={(e) =>
-                      handleChange(f.id, inp.name, e.target.value)
-                    }
-                  />
-                </div>
-              ))}
-            </div>
+      <div className="min-h-screen bg-gradient-to-b from-gray-900 via-black to-gray-950 text-white px-6 py-10">
+        <h1 className="text-4xl font-extrabold text-center mb-10 text-cyan-400 drop-shadow-lg">
+          ⚡ Scientific Physics Lab
+        </h1>
 
-            <button
-              onClick={() => handleCalculate(f)}
-              className="px-5 py-2 bg-blue-500 hover:bg-blue-600 rounded-md font-semibold transition"
+        <div className="grid lg:grid-cols-2 gap-8">
+          {formulas.map((f) => (
+            <div
+              key={f.id}
+              className="bg-gray-800/70 backdrop-blur-md rounded-2xl shadow-lg p-6 border border-gray-700 hover:shadow-2xl hover:scale-[1.02] transition-transform"
             >
-              Calculate
-            </button>
-
-            {results[f.id] !== undefined && (
-              <p className="mt-3 font-bold text-green-400">
-                Result: {results[f.id].toString()}
+              <h2 className="text-xl font-bold mb-2 text-blue-400">{f.title}</h2>
+              <p className="italic text-sm text-gray-300 mb-2">
+                Formula: <span className="text-yellow-300">{f.formula}</span>
               </p>
-            )}
-          </div>
-        ))}
+              <p className="mb-2 text-gray-200">{f.explanation}</p>
+              <p className="mb-4 text-gray-400 text-sm">Example: {f.example}</p>
+
+              <div className="grid sm:grid-cols-2 gap-4 mb-4">
+                {f.inputs.map((inp) => (
+                  <div key={inp.name}>
+                    <label className="block text-xs text-gray-400 mb-1">
+                      {inp.label}
+                    </label>
+                    <input
+                      type="number"
+                      placeholder={inp.placeholder}
+                      className="w-full px-3 py-2 rounded-md bg-gray-900 text-white border border-gray-600 focus:border-blue-400 focus:ring-1 focus:ring-blue-400 outline-none"
+                      onChange={(e) =>
+                        handleChange(f.id, inp.name, e.target.value)
+                      }
+                    />
+                  </div>
+                ))}
+              </div>
+
+              <button
+                onClick={() => handleCalculate(f)}
+                className="px-5 py-2 bg-blue-500 hover:bg-blue-600 rounded-md font-semibold transition"
+              >
+                Calculate
+              </button>
+
+              {results[f.id] !== undefined && (
+                <p className="mt-3 font-bold text-green-400">
+                  Result: {results[f.id].toString()}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

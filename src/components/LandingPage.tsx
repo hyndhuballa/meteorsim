@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; 
+import LandingIntroModal from "./LandingIntroModal"; 
+import TutorialButton from "./TutorialButton";
 import NasaEyesEmbed from "./NasaEyesEmbed"; 
 import ScientificPhysics from "../pages/ScientificPhysics";
 import LiveNASAData from "../pages/LiveNASAData";
@@ -26,9 +28,29 @@ interface LandingPageProps {
 }
 
 const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
+  const [showIntroModal, setShowIntroModal] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const dismissed = localStorage.getItem("landingIntroDismissed");
+    if (!dismissed) {
+      setShowIntroModal(true);
+    }
+  }, []);
+
+  const handleCloseIntroModal = () => {
+    localStorage.setItem("landingIntroDismissed", "yes");
+    setShowIntroModal(false);
+  };
+
+  const openIntro = () => setShowIntroModal(true);
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
+      {showIntroModal && <LandingIntroModal onClose={handleCloseIntroModal} />}
+
+      {/* Floating Tutorial Button */}
+      {!showIntroModal && <TutorialButton onClick={openIntro} />}
       {/* Hero Section */}
       <div className="text-center z-10 max-w-4xl mx-auto px-6">
         {/* Main Logo/Icon */}
@@ -59,7 +81,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
 
         {/* Comprehensive Feature Overview */}
         <div className="mb-16">
-          <h3 className="text-3xl font-bold text-white mb-8 text-center">Complete Impact Analysis Suite</h3>
+          {/* <h3 className="text-3xl font-bold text-white mb-8 text-center">Complete Impact Analysis Suite</h3> */}
 
           {/* Primary Features */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
@@ -142,9 +164,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
   className="glass-card p-6 hover:scale-105 transition-transform duration-300 cursor-pointer focus:ring-2 focus:ring-green-400"
 >
   <Calculator className="w-12 h-12 text-green-400 mx-auto mb-4" />
-  <h4 className="text-xl font-bold text-white mb-2">Scientific Physics</h4>
+  <h4 className="text-xl font-bold text-white mb-2">Scientific Physics Lab</h4>
   <p className="text-gray-300 text-sm">
-    Accurate calculations based on NASA data, real asteroid properties, and validated impact models
+    Experiment with interactive physics formulas like Work and Kinetic Energy through quick calculations
   </p>
 </div>
 
@@ -156,9 +178,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
   className="glass-card p-6 hover:scale-105 transition-transform duration-300 cursor-pointer focus:ring-2 focus:ring-purple-400"
 >
   <Satellite className="w-12 h-12 text-purple-400 mx-auto mb-4" />
-  <h4 className="text-xl font-bold text-white mb-2">Live NASA Data</h4>
+  <h4 className="text-xl font-bold text-white mb-2">Live NASA Data Explorer</h4>
   <p className="text-gray-300 text-sm">
-    Real-time tracking of Near-Earth Objects with current orbital data and threat assessments
+    Access real-time NASA data by date and explore the universe through daily space insights
   </p>
 </div>
 
@@ -184,9 +206,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
   className="glass-card p-4 hover:scale-105 transition-transform duration-300 cursor-pointer focus:ring-2 focus:ring-red-400"
 >
   <Target className="w-8 h-8 text-red-400 mx-auto mb-3" />
-  <h5 className="text-lg font-bold text-white mb-2">Impact Analysis</h5>
+  <h5 className="text-lg font-bold text-white mb-2">Space Knowledge Hub</h5>
   <p className="text-gray-300 text-xs">
-    Detailed consequence modeling including casualties, infrastructure damage, and economic impact
+    Discover planets, stars, galaxies, and space missions with quick facts and daily wonders
   </p>
 </div>
 
@@ -198,9 +220,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
   className="glass-card p-4 hover:scale-105 transition-transform duration-300 cursor-pointer focus:ring-2 focus:ring-orange-400"
 >
   <Clock className="w-8 h-8 text-orange-400 mx-auto mb-3" />
-  <h5 className="text-lg font-bold text-white mb-2">Time-Lapse Simulation</h5>
+  <h5 className="text-lg font-bold text-white mb-2">Timeline of Space Exploration</h5>
   <p className="text-gray-300 text-xs">
-    Watch impacts unfold over time from initial contact through long-term aftermath effects
+    Travel through milestones of humanity’s journey into space, from Sputnik to modern missions
   </p>
 </div>
 
@@ -266,6 +288,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
         {/* Enter Button */}
         <button
           onClick={onEnterApp}
+          disabled={showIntroModal} // prevent entering simulator while intro is up
           className="group relative px-12 py-6 bg-gradient-to-r from-red-600 via-orange-600 to-yellow-600 rounded-2xl font-bold text-2xl text-white shadow-2xl hover:shadow-red-500/25 hover:scale-110 transition-all duration-300 overflow-hidden"
         >
           <div className="absolute inset-0 bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>

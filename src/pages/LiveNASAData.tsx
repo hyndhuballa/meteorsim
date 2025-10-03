@@ -173,8 +173,11 @@
 // }
 
 import React, { useState } from "react";
+import { useEffect } from "react";
 import { ArrowLeft, Star, Rocket, AlertTriangle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import PageIntroModal from "../components/PageIntroModal";
+import TutorialButton from "../components/TutorialButton";
 
 const API_KEY = "1P7WUiuH31fTCPBiu4RHCoEesGQ4L4hxkYAas7sH";
 
@@ -183,7 +186,22 @@ export default function LiveNasaData() {
   const [date, setDate] = useState("");
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [showIntro, setShowIntro] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const dismissed = localStorage.getItem("liveNasaDataIntroDismissed");
+    if (!dismissed) {
+      setShowIntro(true);
+    }
+  }, []);
+
+  const closeIntro = () => {
+    localStorage.setItem("liveNasaDataIntroDismissed", "yes");
+    setShowIntro(false);
+  };
+
+  const openIntro = () => setShowIntro(true);
 
   const handleSubmit = async () => {
     if (!option || !date) {
@@ -223,11 +241,25 @@ export default function LiveNasaData() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white p-6">
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white p-6 relative">
+      {showIntro && (
+        <PageIntroModal
+          title="Live NASA Data Explorer"
+          descriptionLines={[
+            "Select a date to view real-time asteroid data from NASA",
+          ]}
+          onClose={closeIntro}
+        />
+      )}
+
+      {/* Floating Tutorial Button */}
+      {!showIntro && <TutorialButton onClick={openIntro} />}
+
       {/* Back Button */}
       <button
         onClick={() => navigate(-1)}
         className="absolute top-4 left-4 flex items-center gap-2 text-gray-300 hover:text-cyan-400 transition z-10"
+        disabled={showIntro}
       >
         <ArrowLeft className="w-5 h-5" />
         Back

@@ -1,5 +1,4 @@
-// src/App.tsx
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useState, useEffect } from "react";
 import { ArrowLeft, Zap, Flame, Mountain, Waves, CircleDot } from "lucide-react";
 import LandingPage from "./components/LandingPage";
 import GlobeVisualization from "./GlobeVisualization";
@@ -19,10 +18,9 @@ import AftermathVisualization from "./pages/AftermathVisualization";
 import { NEOData } from "./services/NASAService";
 import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import NasaEyesEmbed from "./components/NasaEyesEmbed";
+import TutorialTour from "./components/TutorialTour";
 
-/**
- * Simple types
- */
+
 type City = {
   id: string;
   name: string;
@@ -30,9 +28,6 @@ type City = {
   lng: number;
 };
 
-/**
- * ======== Helper / sample data ========
- */
 const sampleCities: City[] = [
   { id: "nyc", name: "New York, USA", lat: 40.7128, lng: -74.0060 },
   { id: "del", name: "New Delhi, India", lat: 28.6139, lng: 77.2090 },
@@ -57,9 +52,7 @@ const sampleCities: City[] = [
   { id: "joh", name: "Johannesburg, South Africa", lat: -26.2041, lng: 28.0473 },
 ];
 
-/**
- * ======== StarField - lightweight background star field ========
- */
+
 const StarField: React.FC = () => {
   return (
     <div
@@ -70,7 +63,6 @@ const StarField: React.FC = () => {
           "radial-gradient(ellipse at bottom, rgba(10,10,30,0.35) 0%, rgba(0,0,0,0.0) 40%)",
       }}
     >
-      {/* Simple decorative stars using CSS */}
       <div
         style={{
           position: "absolute",
@@ -94,10 +86,7 @@ const StarField: React.FC = () => {
   );
 };
 
-/**
- * ======== Controls ========
- * Props match the usage in your fragment.
- */
+
 type ControlsProps = {
   cities: City[];
   selectedCity: City | null;
@@ -111,6 +100,7 @@ type ControlsProps = {
   showPopulationHeatmap: boolean;
   onTogglePopulationHeatmap: (show: boolean) => void;
 };
+
 
 const Controls: React.FC<ControlsProps> = ({
   cities,
@@ -155,7 +145,7 @@ const Controls: React.FC<ControlsProps> = ({
         max={1000}
         value={asteroidSize}
         onChange={(e) => onSizeChange(Number(e.target.value))}
-        className="w-full mb-2 slider"
+        className="w-full mb-2 slider input-diameter"
       />
       <div className="text-sm text-gray-300 mb-4">Size: {asteroidSize} m</div>
 
@@ -166,19 +156,21 @@ const Controls: React.FC<ControlsProps> = ({
         max={70}
         value={velocity}
         onChange={(e) => onVelocityChange(Number(e.target.value))}
-        className="w-full mb-2 slider"
+        className="w-full mb-2 slider input-velocity"
       />
       <div className="text-sm text-gray-300 mb-4">Velocity: {velocity} km/s</div>
 
       <div className="border-t border-white/10 my-4"></div>
 
       <div className="flex items-center justify-between">
-        <label htmlFor="heatmap-toggle" className="text-sm text-gray-300">Show Population Density</label>
+        <label htmlFor="heatmap-toggle" className="text-sm text-gray-300">
+          Show Population Density
+        </label>
         <label htmlFor="heatmap-toggle" className="relative inline-flex items-center cursor-pointer">
-          <input 
-            type="checkbox" 
-            id="heatmap-toggle" 
-            className="sr-only peer" 
+          <input
+            type="checkbox"
+            id="heatmap-toggle"
+            className="sr-only peer"
             checked={showPopulationHeatmap}
             onChange={(e) => onTogglePopulationHeatmap(e.target.checked)}
           />
@@ -189,7 +181,7 @@ const Controls: React.FC<ControlsProps> = ({
       <button
         onClick={onRunSimulation}
         disabled={isSimulating || !selectedCity}
-        className="w-full py-3 rounded-full bg-gradient-to-r from-yellow-500 to-red-500 text-black font-semibold shadow-lg hover:scale-[1.02] hover:shadow-xl transition-all duration-300 disabled:opacity-50 animate-pulse-glow"
+        className="w-full py-3 rounded-full bg-gradient-to-r from-yellow-500 to-red-500 text-black font-semibold shadow-lg hover:scale-[1.02] hover:shadow-xl transition-all duration-300 disabled:opacity-50 btn-launch-sim"
       >
         {isSimulating ? "🌟 Simulating Impact..." : "🚀 Launch Impact Simulation"}
       </button>
@@ -197,9 +189,6 @@ const Controls: React.FC<ControlsProps> = ({
   );
 };
 
-/**
- * ======== EducationCards ========
- */
 const EducationCards: React.FC = () => {
   return (
     <div className="space-y-4">
@@ -219,15 +208,14 @@ const EducationCards: React.FC = () => {
   );
 };
 
-/**
- * ======== ResultStatCard ========
- * A reusable card for displaying a single result metric with an icon.
- */
-const ResultStatCard: React.FC<{ icon: ReactNode; label: string; value: string | number; unit: string }> = ({ icon, label, value, unit }) => (
+const ResultStatCard: React.FC<{ icon: ReactNode; label: string; value: string | number; unit: string }> = ({
+  icon,
+  label,
+  value,
+  unit,
+}) => (
   <div className="glass-card p-4 flex flex-col items-center justify-center text-center hover:scale-105 transition-transform duration-300">
-    <div className="p-3 bg-white/10 rounded-full mb-3">
-      {icon}
-    </div>
+    <div className="p-3 bg-white/10 rounded-full mb-3">{icon}</div>
     <div className="text-sm text-gray-300">{label}</div>
     <div className="text-2xl font-bold text-glow">{value}</div>
     <div className="text-xs text-gray-400">{unit}</div>
@@ -241,7 +229,7 @@ const Landing: React.FC = () => {
       <StarField />
       <LandingPage
         onEnterApp={() => {
-          setTimeout(() => navigate('/simulation'), 300);
+          setTimeout(() => navigate("/simulation"), 300);
         }}
       />
     </div>
@@ -250,13 +238,7 @@ const Landing: React.FC = () => {
 
 const EarthView: React.FC = () => <NasaEyesEmbed slug="earth" />;
 
-/**
- * ======== Main App ========
- */
 const MainApp: React.FC = () => {
-  // Inject animation styles for the globe blast effect
-  // This is a quick way to ensure styles are available.
-  // In a larger app, this would go in a global CSS file like `index.css`.
   const animationStyles = `
     @keyframes expand-ring {
       0% {
@@ -275,14 +257,12 @@ const MainApp: React.FC = () => {
 
   const navigate = useNavigate();
 
-  // Simulation inputs
   const [cities] = useState<City[]>(sampleCities);
   const [selectedCity, setSelectedCity] = useState<City | null>(sampleCities[0] ?? null);
-  const [asteroidSize, setAsteroidSize] = useState<number>(100); // meters
-  const [velocity, setVelocity] = useState<number>(20); // km/s
+  const [asteroidSize, setAsteroidSize] = useState<number>(100);
+  const [velocity, setVelocity] = useState<number>(20);
   const [showPopulationHeatmap, setShowPopulationHeatmap] = useState<boolean>(false);
 
-  // Simulation state
   const [isSimulating, setIsSimulating] = useState<boolean>(false);
   const [lastResult, setLastResult] = useState<null | {
     energyMt: number;
@@ -292,40 +272,44 @@ const MainApp: React.FC = () => {
     city?: City | null;
   }>(null);
 
-  // Real asteroid data state
   const [selectedRealAsteroid, setSelectedRealAsteroid] = useState<NEOData | null>(null);
   const [useRealAsteroid, setUseRealAsteroid] = useState<boolean>(false);
 
-  // Advanced visualization state
-  const [activeTab, setActiveTab] = useState<'neo' | 'consequences' | 'timeline' | 'aftermath' | 'risk' | 'survival' | 'alerts'>('neo');
-  const [currentTimePhase, setCurrentTimePhase] = useState<string>('impact');
+  const [activeTab, setActiveTab] = useState<
+    "neo" | "consequences" | "timeline" | "aftermath" | "risk" | "survival" | "alerts"
+  >("neo");
+  const [currentTimePhase, setCurrentTimePhase] = useState<string>("impact");
   const [timelineProgress, setTimelineProgress] = useState<number>(0);
 
-  // Run Simulation: compute simple physics in-browser and animate results
-  function runSimulation() {
+  // Tutorial state
+  const [showModal, setShowModal] = useState<boolean | null>(null); // initial null to prevent flicker
+  const [runTour, setRunTour] = useState(false);
+
+  useEffect(() => {
+    const skip = localStorage.getItem("tutorialSkipped");
+    if (skip === "yes") {
+      setShowModal(false);
+    } else {
+      setShowModal(true);
+    }
+  }, []);
+
+  const runSimulation = () => {
     if (!selectedCity) return;
     setIsSimulating(true);
 
-    // Simple physics (in-browser)
-    // density = 3000 kg/m^3
-    // mass = 4/3*pi*(r^3)*density
-    // energyJ = 0.5 * mass * v^2
-    // energyMt = energyJ / 4.184e15
     const density = 3000;
     const radiusMeters = asteroidSize / 2;
-    const mass = (4 / 3) * Math.PI * Math.pow(radiusMeters, 3) * density; // kg
-    const v_m_s = velocity * 1000; // convert km/s to m/s
+    const mass = (4 / 3) * Math.PI * Math.pow(radiusMeters, 3) * density;
+    const v_m_s = velocity * 1000;
     const energyJ = 0.5 * mass * v_m_s * v_m_s;
     const energyMt = energyJ / 4.184e15;
 
-    // crater (simple): size * velocity * sin(angle)
-    // choose angle 45° for demo (sin45 ~= 0.7071); convert meters -> km for crater
     const angleFactor = Math.sin((45 * Math.PI) / 180);
     const craterKm = (asteroidSize * velocity * angleFactor) / 1000;
     const thermalKm = craterKm * 4;
     const shockKm = craterKm * 8;
 
-    // fake animation delay for cinematic effect
     setTimeout(() => {
       setLastResult({
         energyMt: Math.max(1, Math.round(energyMt)),
@@ -336,21 +320,44 @@ const MainApp: React.FC = () => {
       });
       setIsSimulating(false);
     }, 1400);
+  };
+
+  const handleStartTutorial = () => {
+    setShowModal(false);
+    setRunTour(true); // run tutorial after modal closes
+  };
+
+  const handleFloatingButtonClick = () => {
+    setShowModal(true);
+    setRunTour(false); // initially no tutorial running with modal open
+  };
+
+  const handleSkipTutorial = () => {
+    setShowModal(false);
+    localStorage.setItem("tutorialSkipped", "yes");
+    setRunTour(false);
+  };
+
+  const handleFinishTutorial = () => {
+    setRunTour(false);
+  };
+
+  if (showModal === null) {
+    return null; // or a loading spinner if desired
   }
 
-  // Main app UI
   return (
     <div className="min-h-screen text-white overflow-x-hidden relative">
       <>
         <style>{animationStyles}</style>
+        <TutorialTour run={runTour} onFinish={handleFinishTutorial} />
         <StarField />
 
-        {/* Header */}
         <header className="relative z-10 p-6">
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center justify-between mb-4">
               <button
-                onClick={() => navigate('/')}
+                onClick={() => navigate("/")}
                 className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-full transition-all duration-300 backdrop-blur-sm border border-white/20"
               >
                 <ArrowLeft className="w-4 h-4" />
@@ -364,30 +371,21 @@ const MainApp: React.FC = () => {
                 <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-red-400 via-orange-400 to-yellow-400 bg-clip-text text-transparent">
                   Meteor Impact Simulator
                 </h1>
-                {/* <button
-                  onClick={() => navigate('/earth')}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-full text-white font-medium transition-colors"
-                >
-                  Interactive 3D Earth
-                </button> */}
               </div>
 
-              <div className="w-32" /> {/* spacer */}
+              <div className="w-32" />
             </div>
 
             <div className="text-center">
               <p className="text-gray-300 text-lg max-w-2xl mx-auto">
-                Explore the devastating power of asteroid impacts with scientific accuracy.
-                Select a city, adjust parameters, and witness the cosmic consequences.
+                Explore the devastating power of asteroid impacts with scientific accuracy. Select a city, adjust parameters, and witness the cosmic consequences.
               </p>
             </div>
           </div>
         </header>
 
-        {/* Main Content */}
         <main className="relative z-10 max-w-7xl mx-auto p-6">
           <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
-            {/* Left Column - Controls & Info */}
             <div className="xl:col-span-1 space-y-6">
               <Controls
                 cities={cities}
@@ -406,9 +404,8 @@ const MainApp: React.FC = () => {
               <EducationCards />
             </div>
 
-            {/* Middle Column - Enhanced Globe Visualization */}
             <div className="xl:col-span-2">
-              <div className="h-[600px] bg-black rounded-2xl border border-white/10 overflow-hidden">
+              <div className="h-[600px] bg-black rounded-2xl border border-white/10 overflow-hidden sim-area-globe">
                 <GlobeVisualization
                   cities={cities}
                   selectedCity={selectedCity}
@@ -421,73 +418,68 @@ const MainApp: React.FC = () => {
               </div>
             </div>
 
-            {/* Right Column - Combined Data Panels */}
             <div className="xl:col-span-1">
-              <div className="h-[600px] flex flex-col glass-card p-4">
-                {/* Enhanced Tab Navigation */}
+              <div className="h-[600px] flex flex-col glass-card p-4 sidebar-options">
                 <div className="border-b border-gray-600 mb-3">
                   <div className="flex tab-container">
                     <button
-                      onClick={() => setActiveTab('neo')}
-                      className={`compact-tab ${activeTab === 'neo' ? 'active' : ''}`}
+                      onClick={() => setActiveTab("neo")}
+                      className={`compact-tab ${activeTab === "neo" ? "active" : ""}`}
                     >
                       NEOs
                     </button>
                     <button
-                      onClick={() => setActiveTab('consequences')}
-                      className={`compact-tab ${activeTab === 'consequences' ? 'active' : ''}`}
+                      onClick={() => setActiveTab("consequences")}
+                      className={`compact-tab ${activeTab === "consequences" ? "active" : ""}`}
                     >
                       Impact
                     </button>
                     <button
-                      onClick={() => setActiveTab('timeline')}
-                      className={`compact-tab ${activeTab === 'timeline' ? 'active' : ''}`}
+                      onClick={() => setActiveTab("timeline")}
+                      className={`compact-tab ${activeTab === "timeline" ? "active" : ""}`}
                     >
                       Timeline
                     </button>
                     <button
-                      onClick={() => setActiveTab('aftermath')}
-                      className={`compact-tab ${activeTab === 'aftermath' ? 'active' : ''}`}
+                      onClick={() => setActiveTab("aftermath")}
+                      className={`compact-tab ${activeTab === "aftermath" ? "active" : ""}`}
                     >
                       Effects
                     </button>
                     <button
-                      onClick={() => setActiveTab('risk')}
-                      className={`compact-tab ${activeTab === 'risk' ? 'active' : ''}`}
+                      onClick={() => setActiveTab("risk")}
+                      className={`compact-tab ${activeTab === "risk" ? "active" : ""}`}
                     >
                       AI Risk
                     </button>
                     <button
-                      onClick={() => setActiveTab('survival')}
-                      className={`compact-tab ${activeTab === 'survival' ? 'active' : ''}`}
+                      onClick={() => setActiveTab("survival")}
+                      className={`compact-tab ${activeTab === "survival" ? "active" : ""}`}
                     >
                       Survival
                     </button>
                     <button
-                      onClick={() => setActiveTab('alerts')}
-                      className={`compact-tab ${activeTab === 'alerts' ? 'active' : ''}`}
+                      onClick={() => setActiveTab("alerts")}
+                      className={`compact-tab ${activeTab === "alerts" ? "active" : ""}`}
                     >
                       Alerts
                     </button>
                   </div>
                 </div>
 
-                {/* Tab Content */}
                 <div className="flex-1 overflow-y-auto">
-                  {activeTab === 'neo' && (
+                  {activeTab === "neo" && (
                     <RealTimeNEODashboard
                       selectedCity={selectedCity}
                       onAsteroidSelect={(asteroid) => {
                         setSelectedRealAsteroid(asteroid);
                         setUseRealAsteroid(true);
-                        // Update asteroid size based on real data
-                        const diameter = (
-                          asteroid.estimated_diameter.meters.estimated_diameter_min +
-                          asteroid.estimated_diameter.meters.estimated_diameter_max
-                        ) / 2;
+                        const diameter =
+                          (asteroid.estimated_diameter.meters.estimated_diameter_min +
+                            asteroid.estimated_diameter.meters.estimated_diameter_max) /
+                          2;
                         setAsteroidSize(Math.round(diameter));
-    
-                        // Update velocity if available
+
                         if (asteroid.close_approach_data?.[0]?.relative_velocity?.kilometers_per_second) {
                           const vel = parseFloat(asteroid.close_approach_data[0].relative_velocity.kilometers_per_second);
                           setVelocity(Math.round(vel));
@@ -495,7 +487,7 @@ const MainApp: React.FC = () => {
                       }}
                     />
                   )}
-                  {activeTab === 'consequences' && (
+                  {activeTab === "consequences" && (
                     <ImpactConsequencesDashboard
                       selectedCity={selectedCity}
                       lastResult={lastResult}
@@ -505,7 +497,7 @@ const MainApp: React.FC = () => {
                     />
                   )}
 
-                  {activeTab === 'timeline' && (
+                  {activeTab === "timeline" && (
                     <TimeLapseSimulationComponent
                       isActive={!!lastResult}
                       impactLocation={selectedCity}
@@ -517,45 +509,40 @@ const MainApp: React.FC = () => {
                     />
                   )}
 
-                  {activeTab === 'aftermath' && (
+                  {activeTab === "aftermath" && (
                     <AftermathVisualizationComponent
                       isActive={!!lastResult}
                       impactLocation={selectedCity}
                       impactData={lastResult}
                       timePhase={currentTimePhase}
                       onLayerToggle={(layerId, enabled) => {
-                        // Handle layer visibility changes on globe
-                        console.log(`Layer ${layerId} ${enabled ? 'enabled' : 'disabled'}`);
+                        console.log(`Layer ${layerId} ${enabled ? "enabled" : "disabled"}`);
                       }}
                     />
                   )}
 
-                  {activeTab === 'risk' && (
-                    <CityRiskAnalyzer
-                      cities={cities}
-                      selectedCity={selectedCity}
-                      onCitySelect={setSelectedCity}
-                    />
+                  {activeTab === "risk" && (
+                    <CityRiskAnalyzer cities={cities} selectedCity={selectedCity} onCitySelect={setSelectedCity} />
                   )}
 
-                  {activeTab === 'survival' && (
+                  {activeTab === "survival" && (
                     <SurvivalProbabilityZones
                       selectedCity={selectedCity}
                       impactData={lastResult}
                       isActive={!!lastResult}
                       onZoneSelect={(zone) => {
-                        console.log('Selected survival zone:', zone);
+                        console.log("Selected survival zone:", zone);
                       }}
                     />
                   )}
 
-                  {activeTab === 'alerts' && (
+                  {activeTab === "alerts" && (
                     <GlobalAlertSystem
                       isActive={!!selectedCity}
                       impactLocation={selectedCity}
                       asteroidData={{ size: asteroidSize, velocity }}
                       onPhaseChange={(phase) => {
-                        console.log('Alert phase changed:', phase);
+                        console.log("Alert phase changed:", phase);
                       }}
                     />
                   )}
@@ -564,45 +551,22 @@ const MainApp: React.FC = () => {
             </div>
           </div>
 
-          {/* Bottom Section - Quick Stats */}
           {lastResult && (
             <div className="mt-8">
               <div className="glass-card p-6">
                 <h3 className="text-xl font-semibold mb-4 text-glow">Quick Impact Stats</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <ResultStatCard
-                    icon={<Flame className="w-6 h-6 text-orange-400" />}
-                    label="Energy Released"
-                    value={lastResult.energyMt}
-                    unit="Megatons"
-                  />
-                  <ResultStatCard
-                    icon={<Mountain className="w-6 h-6 text-yellow-400" />}
-                    label="Crater Diameter"
-                    value={lastResult.craterKm}
-                    unit="km"
-                  />
-                  <ResultStatCard
-                    icon={<CircleDot className="w-6 h-6 text-red-400" />}
-                    label="Thermal Radius"
-                    value={lastResult.thermalKm}
-                    unit="km"
-                  />
-                  <ResultStatCard
-                    icon={<Waves className="w-6 h-6 text-blue-400" />}
-                    label="Shockwave Radius"
-                    value={lastResult.shockKm}
-                    unit="km"
-                  />
+                  <ResultStatCard icon={<Flame className="w-6 h-6 text-orange-400" />} label="Energy Released" value={lastResult.energyMt} unit="Megatons" />
+                  <ResultStatCard icon={<Mountain className="w-6 h-6 text-yellow-400" />} label="Crater Diameter" value={lastResult.craterKm} unit="km" />
+                  <ResultStatCard icon={<CircleDot className="w-6 h-6 text-red-400" />} label="Thermal Radius" value={lastResult.thermalKm} unit="km" />
+                  <ResultStatCard icon={<Waves className="w-6 h-6 text-blue-400" />} label="Shockwave Radius" value={lastResult.shockKm} unit="km" />
                 </div>
 
                 <div className="mt-6 flex gap-3">
                   <button
                     onClick={() => {
                       if (!lastResult) return;
-                      const blob = new Blob([JSON.stringify(lastResult, null, 2)], {
-                        type: "application/json",
-                      });
+                      const blob = new Blob([JSON.stringify(lastResult, null, 2)], { type: "application/json" });
                       const url = URL.createObjectURL(blob);
                       const a = document.createElement("a");
                       a.href = url;
@@ -627,14 +591,51 @@ const MainApp: React.FC = () => {
           )}
         </main>
 
-        {/* Footer disclaimer */}
         <footer className="relative z-10 max-w-7xl mx-auto p-6 text-center text-sm text-gray-400">
           Demonstration only. Uses NASA open data + simplified impact scaling for education.
         </footer>
+
+        {/* Intro Modal: only show if modal open & not running tutorial */}
+        {showModal && !runTour && (
+          <div className="fixed inset-0 z-[10001] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 intro-modal">
+            <div className="glass-card max-w-md w-full p-8 text-center border border-gray-600 shadow-2xl">
+              <h2 className="text-3xl font-bold text-yellow-400 mb-4">Welcome to MeteorSim!</h2>
+              <p className="text-gray-300 mb-8">
+                Simulate asteroid impacts on Earth. Adjust parameters, run simulations, and explore the consequences with our advanced analysis tools.
+              </p>
+              <div className="flex justify-center gap-4">
+                <button
+                  onClick={handleStartTutorial}
+                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-semibold transition-colors"
+                >
+                  Start Tutorial
+                </button>
+                <button
+                  onClick={handleSkipTutorial}
+                  className="px-6 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-white font-semibold transition-colors"
+                >
+                  Skip
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Floating button only shows if modal not open and tutorial not running */}
+        {!showModal && !runTour && (
+          <button
+            className="fixed right-6 bottom-8 z-[10000] bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-5 rounded-full shadow-lg hover:scale-105 transition-all duration-300"
+            onClick={handleFloatingButtonClick}
+            aria-label="Restart tutorial"
+          >
+            ?
+          </button>
+        )}
       </>
     </div>
   );
 };
+
 
 const App: React.FC = () => {
   return (
