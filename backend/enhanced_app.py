@@ -8,6 +8,7 @@ import os
 import json
 import math
 import requests
+import logging
 from datetime import datetime, timedelta
 from flask import Flask, jsonify, request
 from flask_cors import CORS
@@ -32,6 +33,35 @@ try:
 except Exception as e:
     print(f"⚠️ Gemini AI configuration failed: {e}")
     model = None
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+class NASADataService:
+    """Service for fetching NASA NEO data"""
+
+    def __init__(self, api_key):
+        self.api_key = api_key
+        self.base_url = "https://api.nasa.gov/neo/rest/v1"
+
+    def get_neo_lookup(self, asteroid_id):
+        """Fetch detailed asteroid data from NASA NEO API"""
+        try:
+            url = f"{self.base_url}/neo/{asteroid_id}"
+            params = {"api_key": self.api_key}
+            response = requests.get(url, params=params, timeout=10)
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            logger.error(f"NASA API request failed for asteroid {asteroid_id}: {e}")
+            return {"error": str(e)}
+        except Exception as e:
+            logger.error(f"Unexpected error fetching asteroid {asteroid_id}: {e}")
+            return {"error": str(e)}
+
+# Initialize NASA service
+nasa_service = NASADataService(NASA_API_KEY)
 
 # Enhanced city database with detailed metrics
 CITY_DATABASE = {
@@ -966,6 +996,149 @@ def get_threat_level_from_size(size):
     else:
         return 'MINIMAL_THREAT'
 
+# simple in-memory cache helper (TTL seconds)
+_cache = {}
+import time
+def get_cached(key, ttl_seconds, fetch_fn):
+    now = time.time()
+    entry = _cache.get(key)
+    if entry:
+        ts, value = entry
+        if now - ts < ttl_seconds:
+            return value
+    value = fetch_fn()
+    _cache[key] = (now, value)
+    return value
+
+def compute_impact_metrics(diameter_m: float, velocity_km_s: float, density_kg_m3: float = 2500.0):
+    """
+    Returns mass (kg), energy (J), megatons, approx Mw (earthquake energy equivalent).
+    Safe defaults used if inputs missing (returns None for invalid inputs).
+    """
+    try:
+        if not diameter_m or diameter_m <= 0:
+            return None
+        r = diameter_m / 2.0
+        volume_m3 = (4.0 / 3.0) * math.pi * (r ** 3)            # sphere volume
+        mass_kg = volume_m3 * density_kg_m3                     # assume density
+        v_m_s = max(0.0, float(velocity_km_s)) * 1000.0         # convert km/s -> m/s
+        energy_j = 0.5 * mass_kg * (v_m_s ** 2)
+        megatons = energy_j / 4.184e15                          # 1 Mt TNT = 4.184e15 J
+        approx_mw = (math.log10(energy_j) - 4.8) / 1.5 if energy_j > 0 else None
+        return {
+            "mass_kg": mass_kg,
+            "energy_j": energy_j,
+            "megaton_tnt": megatons,
+            "approx_Mw": approx_mw
+        }
+    except Exception as e:
+        logger.error(f"compute_impact_metrics error: {e}")
+        return None
+
+def estimate_transient_crater_km_from_megatons(megatons: float):
+    """
+    Quick, simple empirical scaling to produce an approximate transient crater diameter (km).
+    This is an approximate heuristic for visualization only. For authoritative modelling,
+    use a detailed crater-scaling model (e.g., Melosh/Holsapple) or Earth Impact Effects.
+    """
+    try:
+        if megatons is None or megatons <= 0:
+            return None
+        # simple empirical scaling: D_km ≈ 0.07 * (E_mt ^ 0.3)
+        D_km = 0.07 * (megatons ** 0.3)
+        return D_km
+    except Exception as e:
+        logger.error(f"estimate_transient_crater_km_from_megatons error: {e}")
+        return None
+
+@app.route("/api/physics/asteroid")
+def asteroid_physics():
+    """
+    Query string:
+      ?asteroid_id=<id_or_neo_reference_id_or_name>
+    Response: JSON with `summary` (human text), `metrics` (numbers), and `raw` (raw asteroid data)
+    """
+    asteroid_id = request.args.get("asteroid_id") or request.args.get("designation")
+    if not asteroid_id:
+        return jsonify({"error": "Provide asteroid_id or designation query param"}), 400
+
+    cache_key = f"physics_{asteroid_id}"
+    # small cache to avoid rate-limits for repeated lookups
+    data = get_cached(cache_key, 300, lambda: nasa_service.get_neo_lookup(asteroid_id))
+
+    if not data or "error" in data:
+        return jsonify({"error": "Failed to fetch asteroid data", "details": data}), 500
+
+    # normalize diameter (meters)
+    diam_m = None
+    diam_info = data.get("estimated_diameter", {}).get("meters", {})
+    if diam_info:
+        min_d = diam_info.get("estimated_diameter_min")
+        max_d = diam_info.get("estimated_diameter_max")
+        if min_d is not None and max_d is not None:
+            diam_m = (float(min_d) + float(max_d)) / 2.0
+
+    # try to get a reasonable encounter velocity from close_approach_data
+    velocity_km_s = None
+    ca = None
+    if data.get("close_approach_data"):
+        ca = data["close_approach_data"][0]
+        vstr = ca.get("relative_velocity", {}).get("kilometers_per_second")
+        try:
+            velocity_km_s = float(vstr)
+        except Exception:
+            velocity_km_s = None
+
+    # if missing velocity, use a conservative default (typical impact velocities ~ 12-25 km/s).
+    if velocity_km_s is None:
+        velocity_km_s = 20.0
+
+    # density default (rocky asteroid)
+    density = 2500.0
+
+    metrics = compute_impact_metrics(diam_m if diam_m else 100.0, velocity_km_s, density)
+
+    crater_km = estimate_transient_crater_km_from_megatons(metrics["megaton_tnt"]) if metrics else None
+
+    # human readable summary
+    name = data.get("name") or asteroid_id
+    hazardous = "potentially hazardous" if data.get("is_potentially_hazardous_asteroid") else "not hazardous"
+    close_date = ca.get("close_approach_date") if ca else None
+    miss_km = None
+    if ca:
+        try:
+            miss_km = float(ca.get("miss_distance", {}).get("kilometers") or 0.0)
+        except Exception:
+            miss_km = None
+
+    summary = (
+        f"{name} (~{int(diam_m) if diam_m else 'unknown'} m) {('approaches on '+close_date) if close_date else 'has recent approach data'}. "
+        f"Miss distance ≈ {int(miss_km):,} km. Status: {hazardous}. "
+        f"Estimated impact energy (if it hit): {metrics['energy_j']:.3e} J (~{metrics['megaton_tnt']:.2f} Mt TNT). "
+        f"Rough seismic-equivalent Mw ≈ {metrics['approx_Mw']:.2f}. "
+        f"Estimated transient crater diameter (very approximate): {crater_km:.2f} km." if metrics else "Metrics not available."
+    )
+
+    response = {
+        "asteroid_id": asteroid_id,
+        "name": name,
+        "is_hazardous": data.get("is_potentially_hazardous_asteroid", False),
+        "diameter_m": diam_m,
+        "velocity_km_s": velocity_km_s,
+        "density_kg_m3": density,
+        "metrics": metrics,
+        "crater_km": crater_km,
+        "close_approach": {
+            "date": close_date,
+            "miss_distance_km": miss_km,
+            "raw": ca
+        },
+        "summary": summary,
+        "raw": data
+    }
+
+    return jsonify(response)
+
 if __name__ == '__main__':
     print("🚀 Enhanced NASA Impact Simulator Backend Starting...")
     print(f"🔑 NASA API Key: {'✅ Configured' if NASA_API_KEY else '❌ Missing'}")
@@ -973,8 +1146,9 @@ if __name__ == '__main__':
     print("🌐 CORS enabled for frontend communication")
     print("📡 Available endpoints:")
     print("   - GET  /api/health")
-    print("   - GET  /api/neo/hazardous") 
+    print("   - GET  /api/neo/hazardous")
     print("   - GET  /api/neo/stats")
+    print("   - GET  /api/physics/asteroid")
     print("   - POST /api/impact/simulate")
     print("   - GET  /api/impact/simulate-real")
     print("   - POST /api/ai/risk-analysis")

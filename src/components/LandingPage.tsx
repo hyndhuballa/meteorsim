@@ -1,6 +1,12 @@
 import React from "react";
 import { useNavigate } from "react-router-dom"; 
 import NasaEyesEmbed from "./NasaEyesEmbed"; 
+import ScientificPhysics from "../pages/ScientificPhysics";
+import LiveNASAData from "../pages/LiveNASAData";
+import AIRiskAnalyzer from "../pages/AIRiskAnalyzer";
+import ImpactAnalysis from "../pages/ImpactAnalysis";
+import TimeLapseSimulation from "../pages/TimeLapseSimulation";
+import AftermathVisualization from "../pages/AftermathVisualization";
 import {
   Zap,
   Globe,
@@ -89,7 +95,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
               </button>
             </div>
 
-            <div className="glass-card p-6 hover:scale-105 transition-transform duration-300">
+            {/* <div className="glass-card p-6 hover:scale-105 transition-transform duration-300">
               <Calculator className="w-12 h-12 text-green-400 mx-auto mb-4" />
               <h4 className="text-xl font-bold text-white mb-2">Scientific Physics</h4>
               <p className="text-gray-300 text-sm">Accurate calculations based on NASA data, real asteroid properties, and validated impact models</p>
@@ -102,7 +108,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
             </div>
           </div>
 
-          {/* Advanced Analysis Tools */}
+          
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <div className="glass-card p-4 hover:scale-105 transition-transform duration-300">
               <Brain className="w-8 h-8 text-cyan-400 mx-auto mb-3" />
@@ -127,7 +133,91 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
               <h5 className="text-lg font-bold text-white mb-2">Aftermath Visualization</h5>
               <p className="text-gray-300 text-xs">Comprehensive post-impact analysis including environmental, geological, and societal effects</p>
             </div>
-          </div>
+          </div> */}
+          {/* Scientific Physics */}
+<div
+  role="button"
+  tabIndex={0}
+  onClick={() => navigate("/scientific-physics")}
+  className="glass-card p-6 hover:scale-105 transition-transform duration-300 cursor-pointer focus:ring-2 focus:ring-green-400"
+>
+  <Calculator className="w-12 h-12 text-green-400 mx-auto mb-4" />
+  <h4 className="text-xl font-bold text-white mb-2">Scientific Physics</h4>
+  <p className="text-gray-300 text-sm">
+    Accurate calculations based on NASA data, real asteroid properties, and validated impact models
+  </p>
+</div>
+
+{/* Live NASA Data */}
+<div
+  role="button"
+  tabIndex={0}
+  onClick={() => navigate("/live-nasa-data")}
+  className="glass-card p-6 hover:scale-105 transition-transform duration-300 cursor-pointer focus:ring-2 focus:ring-purple-400"
+>
+  <Satellite className="w-12 h-12 text-purple-400 mx-auto mb-4" />
+  <h4 className="text-xl font-bold text-white mb-2">Live NASA Data</h4>
+  <p className="text-gray-300 text-sm">
+    Real-time tracking of Near-Earth Objects with current orbital data and threat assessments
+  </p>
+</div>
+
+{/* AI Risk Analyzer */}
+<div
+  role="button"
+  tabIndex={0}
+  onClick={() => navigate("/ai-risk-analyzer")}
+  className="glass-card p-4 hover:scale-105 transition-transform duration-300 cursor-pointer focus:ring-2 focus:ring-cyan-400"
+>
+  <Brain className="w-8 h-8 text-cyan-400 mx-auto mb-3" />
+  <h5 className="text-lg font-bold text-white mb-2">AR Visualization</h5>
+  <p className="text-gray-300 text-xs">
+    Get a closer look at asteroids through AR
+  </p>
+</div>
+
+{/* Impact Analysis */}
+<div
+  role="button"
+  tabIndex={0}
+  onClick={() => navigate("/impact-analysis")}
+  className="glass-card p-4 hover:scale-105 transition-transform duration-300 cursor-pointer focus:ring-2 focus:ring-red-400"
+>
+  <Target className="w-8 h-8 text-red-400 mx-auto mb-3" />
+  <h5 className="text-lg font-bold text-white mb-2">Impact Analysis</h5>
+  <p className="text-gray-300 text-xs">
+    Detailed consequence modeling including casualties, infrastructure damage, and economic impact
+  </p>
+</div>
+
+{/* Time-Lapse Simulation */}
+<div
+  role="button"
+  tabIndex={0}
+  onClick={() => navigate("/time-lapse-simulation")}
+  className="glass-card p-4 hover:scale-105 transition-transform duration-300 cursor-pointer focus:ring-2 focus:ring-orange-400"
+>
+  <Clock className="w-8 h-8 text-orange-400 mx-auto mb-3" />
+  <h5 className="text-lg font-bold text-white mb-2">Time-Lapse Simulation</h5>
+  <p className="text-gray-300 text-xs">
+    Watch impacts unfold over time from initial contact through long-term aftermath effects
+  </p>
+</div>
+
+{/* Aftermath Visualization */}
+<div
+  role="button"
+  tabIndex={0}
+  onClick={() => navigate("/aftermath-visualization")}
+  className="glass-card p-4 hover:scale-105 transition-transform duration-300 cursor-pointer focus:ring-2 focus:ring-yellow-400"
+>
+  <TrendingUp className="w-8 h-8 text-yellow-400 mx-auto mb-3" />
+  <h5 className="text-lg font-bold text-white mb-2">Guardians of Earth</h5>
+  <p className="text-gray-300 text-xs">
+    Exploring Asteroid Mitigation Methods
+  </p>
+</div>
+</div>
 
           {/* Key Capabilities */}
           <div className="glass-card p-6">

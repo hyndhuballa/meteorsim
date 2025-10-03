@@ -1,0 +1,35 @@
+.input-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.input-row input {
+  padding: 0.5rem;
+  border-radius: 5px;
+  border: 1px solid #444;
+  background: #000;
+  color: #fff;
+  width: 180px;
+}
+
+.input-row button {
+  background: #65d9ff;
+  color: #000;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.input-row button:hover {
+  background: #ffd36b;
+}
+
+.calc-result {
+  margin-top: 0.5rem;
+  color: #ffd36b;
+  font-weight: bold;
+}

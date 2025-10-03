@@ -5,11 +5,17 @@ import LandingPage from "./components/LandingPage";
 import GlobeVisualization from "./GlobeVisualization";
 import ImpactConsequencesDashboard from "./components/ImpactConsequencesDashboard";
 import RealTimeNEODashboard from "./components/RealTimeNEODashboard";
-import TimeLapseSimulation from "./components/TimeLapseSimulation";
-import AftermathVisualization from "./components/AftermathVisualization";
+import TimeLapseSimulationComponent from "./components/TimeLapseSimulation";
+import AftermathVisualizationComponent from "./components/AftermathVisualization";
 import CityRiskAnalyzer from "./components/CityRiskAnalyzer";
 import SurvivalProbabilityZones from "./components/SurvivalProbabilityZones";
 import GlobalAlertSystem from "./components/GlobalAlertSystem";
+import ScientificPhysics from "./pages/ScientificPhysics";
+import AIRiskAnalyzer from "./pages/AIRiskAnalyzer";
+import LiveNASAData from "./pages/LiveNASAData";
+import ImpactAnalysis from "./pages/ImpactAnalysis";
+import TimeLapseSimulation from "./pages/TimeLapseSimulation";
+import AftermathVisualization from "./pages/AftermathVisualization";
 import { NEOData } from "./services/NASAService";
 import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import NasaEyesEmbed from "./components/NasaEyesEmbed";
@@ -500,7 +506,7 @@ const MainApp: React.FC = () => {
                   )}
 
                   {activeTab === 'timeline' && (
-                    <TimeLapseSimulation
+                    <TimeLapseSimulationComponent
                       isActive={!!lastResult}
                       impactLocation={selectedCity}
                       impactData={lastResult}
@@ -512,7 +518,7 @@ const MainApp: React.FC = () => {
                   )}
 
                   {activeTab === 'aftermath' && (
-                    <AftermathVisualization
+                    <AftermathVisualizationComponent
                       isActive={!!lastResult}
                       impactLocation={selectedCity}
                       impactData={lastResult}
@@ -636,7 +642,13 @@ const App: React.FC = () => {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/simulation" element={<MainApp />} />
+        <Route path="/scientific-physics" element={<ScientificPhysics />} />
         <Route path="/earth" element={<EarthView />} />
+        <Route path="/live-nasa-data" element={<LiveNASAData />} />
+        <Route path="/ai-risk-analyzer" element={<AIRiskAnalyzer />} />
+        <Route path="/impact-analysis" element={<ImpactAnalysis />} />
+        <Route path="/time-lapse-simulation" element={<TimeLapseSimulation />} />
+        <Route path="/aftermath-visualization" element={<AftermathVisualization />} />
       </Routes>
     </Router>
   );
