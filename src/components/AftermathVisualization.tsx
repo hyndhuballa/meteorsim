@@ -1,21 +1,18 @@
-import React, { useState, useEffect } from "react";
+"use client";
+import { useState, useEffect } from "react";
 import { Shield, Rocket, Satellite, AlertTriangle, Target } from "lucide-react";
-import GameWrapper from "./GameWrapper";
 
 interface Method {
   id: number;
   title: string;
   icon: string; // backend returns a keyword like "satellite" | "rocket" etc.
-  gameType: string;
-  details: string;
+  description: string;
 }
 
 export default function AftermathVisualization() {
   const [methods, setMethods] = useState<Method[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeCard, setActiveCard] = useState<number | null>(null);
-  const [playGame, setPlayGame] = useState(false);
-  const [lastScore, setLastScore] = useState<number | null>(null);
 
   // Map API icon keyword → Lucide icon
   const iconMap: Record<string, JSX.Element> = {
@@ -29,10 +26,12 @@ export default function AftermathVisualization() {
 
   useEffect(() => {
     const fetchMethods = async () => {
+      setLoading(true);
       try {
-        const res = await fetch("/api/aftermath"); // 🔥 Update this to your real endpoint
-        const data: Method[] = await res.json();
-        setMethods(data);
+        const res = await fetch("/api/aftermath");
+        if (!res.ok) throw new Error("Failed to fetch aftermath data");
+        const data = await res.json();
+        setMethods(data.methods);
       } catch (err) {
         console.error("Failed to load mitigation methods:", err);
       } finally {
@@ -43,11 +42,11 @@ export default function AftermathVisualization() {
   }, []);
 
   // Format description text
-  const formatDetails = (text: string) => {
+  const formatDescription = (text: string) => {
     return text.split("\n").map((line, i) => {
       if (/^[\u2600-\u27BF\ufe0f\u{1F300}-\u{1FAFF}]/u.test(line)) {
         return (
-          <p key={i} className="mt-3 text-cyan-400 font-semibold">
+          <p key={i} className="mt-3 text-yellow-400 font-semibold">
             {line}
           </p>
         );
@@ -58,28 +57,6 @@ export default function AftermathVisualization() {
         </p>
       );
     });
-  };
-
-  const handleGameEnd = (score: number) => {
-    setLastScore(score);
-    setPlayGame(false);
-  };
-
-  const shareScore = (platform: string) => {
-    const method = activeCard ? methods.find((m) => m.id === activeCard) : null;
-    if (!method) return;
-    const text = `🚀 I just tried the "${method.title}" asteroid defense game and scored ${lastScore}!\nTry this mitigation method yourself!`;
-
-    if (platform === "whatsapp") {
-      window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
-    } else if (platform === "twitter") {
-      window.open(
-        `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`,
-        "_blank"
-      );
-    } else {
-      alert("Sharing for this platform not implemented yet.");
-    }
   };
 
   return (
@@ -96,11 +73,7 @@ export default function AftermathVisualization() {
           {methods.map((method) => (
             <div
               key={method.id}
-              onClick={() => {
-                setActiveCard(method.id);
-                setPlayGame(false);
-                setLastScore(null);
-              }}
+              onClick={() => setActiveCard(method.id)}
               className="p-6 bg-gray-800 border border-gray-700 rounded-xl shadow-lg 
                          cursor-pointer hover:scale-105 transform transition-all duration-300 flex flex-col items-center"
             >
@@ -116,7 +89,7 @@ export default function AftermathVisualization() {
       {activeCard !== null && (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
           <div className="bg-gray-900 border border-gray-700 rounded-xl shadow-2xl 
-                          w-11/12 md:w-3/4 lg:w-2/3 max-h-[85vh] p-6 relative 
+                          w-11/12 md:w-3/4 lg:w-2/3 max-h-[80vh] p-6 relative 
                           transform transition-all duration-500 scale-100 overflow-y-auto">
             <button
               onClick={() => setActiveCard(null)}
@@ -125,54 +98,17 @@ export default function AftermathVisualization() {
               ✖ Close
             </button>
 
-            {!playGame ? (
-              <div className="flex flex-col items-center text-center">
-                {iconMap[methods.find((m) => m.id === activeCard)?.icon || "shield"]}
-                <h2 className="text-2xl font-bold mt-3 text-yellow-400">
-                  {methods.find((m) => m.id === activeCard)?.title}
-                </h2>
-                <div className="mt-5 text-left space-y-2 max-w-2xl">
-                  {formatDetails(methods.find((m) => m.id === activeCard)?.details || "")}
-                </div>
-
-                {/* Button to start game */}
-                <button
-                  onClick={() => setPlayGame(true)}
-                  className="mt-6 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg"
-                >
-                  🎮 Try it with a Game
-                </button>
-
-                {/* After game ends, show share buttons */}
-                {lastScore !== null && (
-                  <div className="mt-6 text-center">
-                    <p className="text-green-400 font-bold text-lg">
-                      ✅ You scored {lastScore} points!
-                    </p>
-                    <p className="text-gray-400 mt-2">Share your score:</p>
-                    <div className="flex justify-center gap-3 mt-3">
-                      <button
-                        onClick={() => shareScore("whatsapp")}
-                        className="bg-green-500 hover:bg-green-600 px-3 py-1 rounded text-white text-sm"
-                      >
-                        WhatsApp
-                      </button>
-                      <button
-                        onClick={() => shareScore("twitter")}
-                        className="bg-blue-400 hover:bg-blue-500 px-3 py-1 rounded text-white text-sm"
-                      >
-                        Twitter
-                      </button>
-                    </div>
-                  </div>
+            <div className="flex flex-col items-center text-center">
+              {iconMap[methods.find((m) => m.id === activeCard)?.icon || "shield"]}
+              <h2 className="text-2xl font-bold mt-3 text-yellow-400">
+                {methods.find((m) => m.id === activeCard)?.title}
+              </h2>
+              <div className="mt-5 text-left space-y-2 max-w-2xl">
+                {formatDescription(
+                  methods.find((m) => m.id === activeCard)?.description || ""
                 )}
               </div>
-            ) : (
-              <GameWrapper
-                type={methods.find((m) => m.id === activeCard)?.gameType || ""}
-                onGameEnd={handleGameEnd}
-              />
-            )}
+            </div>
           </div>
         </div>
       )}
