@@ -9,10 +9,7 @@ const AIRiskAnalyzer: React.FC = () => {
   const [showIntro, setShowIntro] = useState(false);
 
   useEffect(() => {
-    const dismissed = localStorage.getItem("aiRiskAnalyzerIntroDismissed");
-    if (!dismissed) {
-      setShowIntro(true);
-    }
+    setShowIntro(true);
   }, []);
 
   const closeIntro = () => {

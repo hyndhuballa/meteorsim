@@ -190,10 +190,7 @@ export default function LiveNasaData() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const dismissed = localStorage.getItem("liveNasaDataIntroDismissed");
-    if (!dismissed) {
-      setShowIntro(true);
-    }
+    setShowIntro(true);
   }, []);
 
   const closeIntro = () => {

@@ -133,10 +133,7 @@ const ScientificPhysics: React.FC = () => {
   const [showIntro, setShowIntro] = useState(false);
 
   useEffect(() => {
-    const dismissed = localStorage.getItem("scientificPhysicsIntroDismissed");
-    if (!dismissed) {
-      setShowIntro(true);
-    }
+    setShowIntro(true);
   }, []);
 
   const closeIntro = () => {

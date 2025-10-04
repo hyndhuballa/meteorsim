@@ -23,10 +23,7 @@ export default function TimeLapseSimulation() {
       .then((res) => res.json())
       .then((data) => setLaunches(data.results));
 
-    const dismissed = localStorage.getItem("timeLapseSimulationIntroDismissed");
-    if (!dismissed) {
-      setShowIntro(true);
-    }
+    setShowIntro(true);
   }, []);
 
   const closeIntro = () => {

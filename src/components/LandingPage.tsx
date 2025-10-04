@@ -1,361 +1,219 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; 
-import LandingIntroModal from "./LandingIntroModal"; 
-import TutorialButton from "./TutorialButton";
-import NasaEyesEmbed from "./NasaEyesEmbed"; 
-import ScientificPhysics from "../pages/ScientificPhysics";
-import LiveNASAData from "../pages/LiveNASAData";
-import AIRiskAnalyzer from "../pages/AIRiskAnalyzer";
-import ImpactAnalysis from "../pages/ImpactAnalysis";
-import TimeLapseSimulation from "../pages/TimeLapseSimulation";
-import AftermathVisualization from "../pages/AftermathVisualization";
+import { useNavigate } from "react-router-dom";
+import LandingIntroModal from "./LandingIntroModal";
 import {
   Zap,
   Globe,
   Calculator,
-  BookOpen,
-  ArrowDown,
   Brain,
   Clock,
   Target,
   Satellite,
-  AlertTriangle,
-  TrendingUp
-} from 'lucide-react';
+  TrendingUp,
+} from "lucide-react";
+import solarBg from "../solarbg.webp";
+import bg3 from "../bg3.webp"; // ✅ Unified background for Sections 3–5
 
-interface LandingPageProps {
-  onEnterApp: () => void;
-}
-
-const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
+const LandingPage: React.FC<{ onEnterApp: () => void }> = ({ onEnterApp }) => {
   const [showIntroModal, setShowIntroModal] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const dismissed = localStorage.getItem("landingIntroDismissed");
-    if (!dismissed) {
-      setShowIntroModal(true);
-    }
+    setShowIntroModal(true);
   }, []);
 
   const handleCloseIntroModal = () => {
-    localStorage.setItem("landingIntroDismissed", "yes");
     setShowIntroModal(false);
   };
 
-  const openIntro = () => setShowIntroModal(true);
-
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
-      {showIntroModal && <LandingIntroModal onClose={handleCloseIntroModal} />}
+    <div className="relative min-h-screen w-full overflow-x-hidden">
+      {showIntroModal && (
+        <LandingIntroModal
+          onClose={handleCloseIntroModal}
+          videoId="your-video-id"
+        />
+      )}
 
-      {/* Floating Tutorial Button */}
-      {!showIntroModal && <TutorialButton onClick={openIntro} />}
-      {/* Hero Section */}
-      <div className="text-center z-10 max-w-4xl mx-auto px-6">
-        {/* Main Logo/Icon */}
-        <div className="mb-8 flex justify-center">
-          <div className="relative">
-            <div className="p-6 bg-gradient-to-r from-red-600 via-orange-600 to-yellow-600 rounded-full shadow-2xl animate-pulse-glow">
-              <Zap className="w-16 h-16 text-white" />
-            </div>
-            <div className="absolute inset-0 bg-gradient-to-r from-red-600 via-orange-600 to-yellow-600 rounded-full blur-xl opacity-50 animate-pulse"></div>
-          </div>
-        </div>
-
-        {/* App Title */}
-        <h1 className="text-6xl md:text-8xl font-bold mb-6 bg-gradient-to-r from-red-400 via-orange-400 to-yellow-400 bg-clip-text text-transparent text-glow animate-pulse">
-          METEOR IMPACT
-        </h1>
-        <h2 className="text-4xl md:text-6xl font-bold mb-8 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-          SIMULATOR
-        </h2>
-
-        {/* Subtitle */}
-        <p className="text-xl md:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed">
-          Experience the devastating power of asteroid impacts with scientific accuracy.
-          Featuring AI-powered risk analysis, real NASA data, interactive 3D Earth visualization,
-          and comprehensive impact modeling. Explore cosmic consequences, learn planetary defense,
-          and witness the forces that shaped our world.
-        </p>
-
-        {/* Comprehensive Feature Overview */}
-        <div className="mb-16">
-          {/* <h3 className="text-3xl font-bold text-white mb-8 text-center">Complete Impact Analysis Suite</h3> */}
-
-          {/* Primary Features */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            {/* <div className="glass-card p-6 hover:scale-105 transition-transform duration-300">
-              <Globe className="w-12 h-12 text-blue-400 mx-auto mb-4" />
-              <h4 className="text-xl font-bold text-white mb-2">Interactive 3D Earth</h4>
-              <p className="text-gray-300 text-sm">Rotate and explore our planet with realistic impact visualizations and population heatmaps</p>
-            </div> */}
-            {/* <div className="glass-card p-6 hover:scale-105 transition-transform duration-300">
-      <Globe className="w-12 h-12 text-blue-400 mx-auto mb-4" />
-      <h4 className="text-xl font-bold text-white mb-2">Interactive 3D Earth</h4>
-      <p className="text-gray-300 text-sm">
-        Rotate and explore our planet with realistic impact visualizations and population heatmaps
-      </p>
-      <button
-        onClick={() => navigate("/earth")}
-        className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-full text-white font-medium transition-colors"
+      {/* Group 1: Section 1 + 2 with solarBg */}
+      <div
+        className="relative bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${solarBg})` }}
       >
-        Open 3D Earth
-      </button>
-    </div> */}
-            <div className="glass-card p-6 hover:scale-105 transition-transform duration-300">
-              <Globe className="w-12 h-12 text-blue-400 mx-auto mb-4" />
-              <h4 className="text-xl font-bold text-white mb-2">Interactive 3D Earth</h4>
-              <p className="text-gray-300 text-sm">
-                Rotate and explore our planet with realistic impact visualizations and population heatmaps
-              </p>
-              <button
-                onClick={() => navigate("/earth")} 
-                className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-full text-white font-medium transition-colors"
-              >
-                Open 3D Earth
-              </button>
-            </div>
+        <div className="absolute inset-0 bg-black/50 z-0"></div>
 
-            {/* <div className="glass-card p-6 hover:scale-105 transition-transform duration-300">
-              <Calculator className="w-12 h-12 text-green-400 mx-auto mb-4" />
-              <h4 className="text-xl font-bold text-white mb-2">Scientific Physics</h4>
-              <p className="text-gray-300 text-sm">Accurate calculations based on NASA data, real asteroid properties, and validated impact models</p>
-            </div>
-
-            <div className="glass-card p-6 hover:scale-105 transition-transform duration-300">
-              <Satellite className="w-12 h-12 text-purple-400 mx-auto mb-4" />
-              <h4 className="text-xl font-bold text-white mb-2">Live NASA Data</h4>
-              <p className="text-gray-300 text-sm">Real-time tracking of Near-Earth Objects with current orbital data and threat assessments</p>
-            </div>
-          </div>
-
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <div className="glass-card p-4 hover:scale-105 transition-transform duration-300">
-              <Brain className="w-8 h-8 text-cyan-400 mx-auto mb-3" />
-              <h5 className="text-lg font-bold text-white mb-2">AI Risk Analyzer</h5>
-              <p className="text-gray-300 text-xs">AI-powered city vulnerability assessment with impact scenarios and emergency recommendations</p>
-            </div>
-
-            <div className="glass-card p-4 hover:scale-105 transition-transform duration-300">
-              <Target className="w-8 h-8 text-red-400 mx-auto mb-3" />
-              <h5 className="text-lg font-bold text-white mb-2">Impact Analysis</h5>
-              <p className="text-gray-300 text-xs">Detailed consequence modeling including casualties, infrastructure damage, and economic impact</p>
-            </div>
-
-            <div className="glass-card p-4 hover:scale-105 transition-transform duration-300">
-              <Clock className="w-8 h-8 text-orange-400 mx-auto mb-3" />
-              <h5 className="text-lg font-bold text-white mb-2">Time-Lapse Simulation</h5>
-              <p className="text-gray-300 text-xs">Watch impacts unfold over time from initial contact through long-term aftermath effects</p>
-            </div>
-
-            <div className="glass-card p-4 hover:scale-105 transition-transform duration-300">
-              <TrendingUp className="w-8 h-8 text-yellow-400 mx-auto mb-3" />
-              <h5 className="text-lg font-bold text-white mb-2">Aftermath Visualization</h5>
-              <p className="text-gray-300 text-xs">Comprehensive post-impact analysis including environmental, geological, and societal effects</p>
-            </div>
-          </div> */}
-          {/* Scientific Physics */}
-<div
-  role="button"
-  tabIndex={0}
-  onClick={() => navigate("/scientific-physics")}
-  className="glass-card p-6 hover:scale-105 transition-transform duration-300 cursor-pointer focus:ring-2 focus:ring-green-400"
->
-  <Calculator className="w-12 h-12 text-green-400 mx-auto mb-4" />
-  <h4 className="text-xl font-bold text-white mb-2">Scientific Physics Lab</h4>
-  <p className="text-gray-300 text-sm">
-    Experiment with interactive physics formulas like Work and Kinetic Energy through quick calculations
-  </p>
-</div>
-
-{/* Live NASA Data */}
-<div
-  role="button"
-  tabIndex={0}
-  onClick={() => navigate("/live-nasa-data")}
-  className="glass-card p-6 hover:scale-105 transition-transform duration-300 cursor-pointer focus:ring-2 focus:ring-purple-400"
->
-  <Satellite className="w-12 h-12 text-purple-400 mx-auto mb-4" />
-  <h4 className="text-xl font-bold text-white mb-2">Live NASA Data Explorer</h4>
-  <p className="text-gray-300 text-sm">
-    Access real-time NASA data by date and explore the universe through daily space insights
-  </p>
-</div>
-
-{/* AI Risk Analyzer */}
-<div
-  role="button"
-  tabIndex={0}
-  onClick={() => navigate("/ai-risk-analyzer")}
-  className="glass-card p-4 hover:scale-105 transition-transform duration-300 cursor-pointer focus:ring-2 focus:ring-cyan-400"
->
-  <Brain className="w-8 h-8 text-cyan-400 mx-auto mb-3" />
-  <h5 className="text-lg font-bold text-white mb-2">AR Visualization</h5>
-  <p className="text-gray-300 text-xs">
-    Get a closer look at asteroids through AR
-  </p>
-</div>
-
-{/* Impact Analysis */}
-<div
-  role="button"
-  tabIndex={0}
-  onClick={() => navigate("/impact-analysis")}
-  className="glass-card p-4 hover:scale-105 transition-transform duration-300 cursor-pointer focus:ring-2 focus:ring-red-400"
->
-  <Target className="w-8 h-8 text-red-400 mx-auto mb-3" />
-  <h5 className="text-lg font-bold text-white mb-2">Space Knowledge Hub</h5>
-  <p className="text-gray-300 text-xs">
-    Discover planets, stars, galaxies, and space missions with quick facts and daily wonders
-  </p>
-</div>
-
-{/* Time-Lapse Simulation */}
-<div
-  role="button"
-  tabIndex={0}
-  onClick={() => navigate("/time-lapse-simulation")}
-  className="glass-card p-4 hover:scale-105 transition-transform duration-300 cursor-pointer focus:ring-2 focus:ring-orange-400"
->
-  <Clock className="w-8 h-8 text-orange-400 mx-auto mb-3" />
-  <h5 className="text-lg font-bold text-white mb-2">Timeline of Space Exploration</h5>
-  <p className="text-gray-300 text-xs">
-    Travel through milestones of humanity’s journey into space, from Sputnik to modern missions
-  </p>
-</div>
-
-{/* Aftermath Visualization */}
-<div
-  role="button"
-  tabIndex={0}
-  onClick={() => navigate("/aftermath-visualization")}
-  className="glass-card p-4 hover:scale-105 transition-transform duration-300 cursor-pointer focus:ring-2 focus:ring-yellow-400"
->
-  <TrendingUp className="w-8 h-8 text-yellow-400 mx-auto mb-3" />
-  <h5 className="text-lg font-bold text-white mb-2">Guardians of Earth</h5>
-  <p className="text-gray-300 text-xs">
-    Exploring Asteroid Mitigation Methods
-  </p>
-</div>
-</div>
-
-          {/* Key Capabilities */}
-          <div className="glass-card p-6">
-            <h4 className="text-2xl font-bold text-white mb-6 text-center">What You Can Explore</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-                  <span className="text-gray-300">Simulate impacts on 20+ major world cities</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                  <span className="text-gray-300">Adjust asteroid size (10m - 10km) and velocity</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
-                  <span className="text-gray-300">Track real Near-Earth Objects from NASA</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-cyan-400 rounded-full"></div>
-                  <span className="text-gray-300">AI-powered risk assessment and recommendations</span>
-                </div>
-              </div>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-red-400 rounded-full"></div>
-                  <span className="text-gray-300">Calculate energy release, crater size, and damage zones</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
-                  <span className="text-gray-300">Visualize population density and vulnerability</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
-                  <span className="text-gray-300">Explore time-lapse impact progression</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-pink-400 rounded-full"></div>
-                  <span className="text-gray-300">Learn about planetary defense strategies</span>
-                </div>
+        {/* Section 1: Hero */}
+        <section className="flex flex-col items-center justify-center pt-24 pb-16 text-white relative">
+          <div className="relative z-10 text-center">
+            <div className="flex justify-center mb-12">
+              <div className="p-8 rounded-full bg-gradient-to-br from-indigo-600 to-fuchsia-600 shadow-2xl backdrop-blur-lg animate-pulse">
+                <Zap className="w-16 h-16 text-yellow-300" />
               </div>
             </div>
+            <h1 className="text-6xl font-bold bg-gradient-to-r from-yellow-400 via-orange-400 to-fuchsia-400 bg-clip-text text-transparent drop-shadow-lg mb-4">
+              Unveiling the Impactor-2025
+            </h1>
+            <p className="max-w-2xl mx-auto text-lg md:text-2xl opacity-95 mb-8">
+              Experience the mysteries of cosmic impacts with real NASA data,
+              AI-powered risk analysis, and stunning interactive visuals.
+            </p>
           </div>
-        </div>
+        </section>
 
-        {/* Enter Button */}
-        <button
-          onClick={onEnterApp}
-          disabled={showIntroModal} // prevent entering simulator while intro is up
-          className="group relative px-12 py-6 bg-gradient-to-r from-red-600 via-orange-600 to-yellow-600 rounded-2xl font-bold text-2xl text-white shadow-2xl hover:shadow-red-500/25 hover:scale-110 transition-all duration-300 overflow-hidden"
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          <div className="relative flex items-center gap-4">
-            <span>LAUNCH SIMULATOR</span>
-            <Zap className="w-8 h-8 group-hover:rotate-12 transition-transform duration-300" />
+        {/* Section 2: Simulator Launch */}
+        <section className="flex flex-col items-center py-14 relative">
+          <div className="relative z-10 bg-black/50 rounded-2xl p-10 backdrop-blur-lg shadow-2xl mb-8">
+            <h2 className="text-3xl font-bold mb-4 text-white">
+              Ready to Explore?
+            </h2>
+            <button
+              onClick={onEnterApp}
+              className="px-10 py-4 bg-gradient-to-r from-yellow-500 via-orange-500 to-fuchsia-600 rounded-xl font-semibold text-2xl shadow-xl hover:scale-105 transition transform duration-200 hover:shadow-2xl flex items-center gap-4"
+            >
+              <span>Launch Simulator</span>
+              <Zap className="w-8 h-8 text-white" />
+            </button>
           </div>
-        </button>
-
-        {/* Scroll Indicator */}
-        <div className="mt-16 animate-bounce">
-          <ArrowDown className="w-8 h-8 text-gray-400 mx-auto" />
-          <p className="text-gray-400 text-sm mt-2">Scroll to explore features</p>
-        </div>
+        </section>
       </div>
 
-      {/* Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Floating Asteroids */}
-        <div className="absolute top-20 left-10 w-4 h-4 bg-gradient-to-r from-gray-400 to-gray-600 rounded-full animate-pulse opacity-60"></div>
-        <div className="absolute top-40 right-20 w-6 h-6 bg-gradient-to-r from-gray-500 to-gray-700 rounded-full animate-pulse opacity-40 animation-delay-1000"></div>
-        <div className="absolute bottom-40 left-20 w-3 h-3 bg-gradient-to-r from-gray-400 to-gray-600 rounded-full animate-pulse opacity-50 animation-delay-2000"></div>
-        <div className="absolute bottom-20 right-10 w-5 h-5 bg-gradient-to-r from-gray-500 to-gray-700 rounded-full animate-pulse opacity-30 animation-delay-3000"></div>
-      </div>
+      {/* Group 2: Section 3 + 4 + 5 with bg3 */}
+      <div
+        className="relative bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${bg3})` }}
+      >
+        <div className="absolute inset-0 bg-black/70 z-0"></div>
 
-      {/* Additional Info Section */}
-      <div className="mt-32 max-w-6xl mx-auto px-6 pb-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          <div>
-            <h3 className="text-3xl font-bold text-white mb-6">Why Meteor Impact Simulation?</h3>
-            <div className="space-y-4 text-gray-300">
-              <p>
-                Asteroid impacts have shaped Earth's history, from creating the Moon to ending the age of dinosaurs. 
-                Understanding these cosmic events helps us prepare for future threats and appreciate the forces that continue to shape our planet.
+        {/* Section 3: Features */}
+        <section className="max-w-6xl mx-auto py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-9 px-6 relative z-10 text-white">
+          <GlassButton
+            icon={<Globe className="w-12 h-12 text-blue-400" />}
+            label="Interactive 3D Space"
+            desc="Explore our solarsystem, asteroids, comets and planets"
+            onClick={() => navigate("/asteroids")}
+          />
+          <GlassButton
+            icon={<Calculator className="w-12 h-12 text-green-400" />}
+            label="Scientific Physics Lab"
+            desc="Try interactive asteroid physics."
+            onClick={() => navigate("/scientific-physics")}
+          />
+          <GlassButton
+            icon={<Satellite className="w-12 h-12 text-purple-400" />}
+            label="Live NASA Data"
+            desc="Explore real-time NASA asteroid data."
+            onClick={() => navigate("/live-nasa-data")}
+          />
+          <GlassButton
+            icon={<Brain className="w-12 h-12 text-cyan-400" />}
+            label="AR Visualization"
+            desc="Get a closer look at asteroids using AR"
+            onClick={() => navigate("/ai-risk-analyzer")}
+          />
+          <GlassButton
+            icon={<Target className="w-12 h-12 text-red-400" />}
+            label="Space Knowledge Hub"
+            desc="Discover planets, stars, galaxies, and space missions"
+            onClick={() => navigate("/impact-analysis")}
+          />
+          <GlassButton
+            icon={<Clock className="w-12 h-12 text-yellow-400" />}
+            label="Timeline of Space Exploration"
+            desc="Travel through the milestones"
+            onClick={() => navigate("/time-lapse-simulation")}
+          />
+          <GlassButton
+            icon={<TrendingUp className="w-12 h-12 text-pink-400" />}
+            label="Guardians of Earth"
+            desc="Explore asteroid mitigation methods"
+            onClick={() => navigate("/aftermath-visualization")}
+          />
+        </section>
+
+        {/* Section 4: Informational */}
+        <section className="py-20 text-white relative z-10">
+          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center px-6">
+            <div>
+              <h3 className="text-4xl font-bold mb-5">
+                Impactor-2025: Why It Matters
+              </h3>
+              <p className="mb-6 text-lg">
+                Asteroid impacts have shaped Earth's history. Our simulator
+                empowers all users to explore these forces with scientific
+                accuracy and stunning visuals.
               </p>
-              <p>
-                Our simulator uses real NASA data and scientific models to provide accurate impact calculations, 
-                making complex astrophysics accessible to everyone through stunning visualizations.
-              </p>
+              <ul className="space-y-3 text-gray-300 list-disc list-inside">
+                <li>Real NASA & USGS data for precision.</li>
+                <li>Model global effects & local aftermaths.</li>
+                <li>Discover how mitigation strategies work.</li>
+              </ul>
+            </div>
+            <div>
+              <div className="bg-white/10 backdrop-blur-lg p-8 rounded-2xl shadow-2xl">
+                <h4 className="text-2xl font-bold mb-3 text-center">
+                  Impactor Stats
+                </h4>
+                <div className="space-y-4 font-mono text-lg">
+                  <div className="flex justify-between">
+                    <span className="text-gray-300">
+                      Daily debris hitting Earth:
+                    </span>
+                    <span className="text-blue-400">~50 tons</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-300">Energy (Chicxulub):</span>
+                    <span className="text-red-400">100M Mt TNT</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-300">Tracked asteroids:</span>
+                    <span className="text-green-400">30,000+</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-300">Atmosphere limit:</span>
+                    <span className="text-purple-400">~25 meters</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
+        </section>
 
-          <div className="glass-card p-8">
-            <h4 className="text-2xl font-bold text-white mb-6 text-center">Quick Facts</h4>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-gray-300">Daily space debris hitting Earth:</span>
-                <span className="text-blue-400 font-mono">~50 tons</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-300">Chicxulub impact energy:</span>
-                <span className="text-red-400 font-mono">100M Mt TNT</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-300">Tracked near-Earth asteroids:</span>
-                <span className="text-green-400 font-mono">30,000+</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-300">Atmosphere protection limit:</span>
-                <span className="text-purple-400 font-mono">~25 meters</span>
-              </div>
-            </div>
+        {/* Section 5: Narrative */}
+        <section className="py-20 text-white relative z-10">
+          <div className="max-w-4xl mx-auto px-6 text-center">
+            <h3 className="text-4xl font-bold mb-5">
+              Unveiling the Impactor-2025 Narrative
+            </h3>
+            <p className="text-lg opacity-80">
+              Discover the story behind Impactor-2025, its cosmic origins, and
+              how modern science lets us decode its behavior, risks and
+              potential prevention strategies.
+            </p>
           </div>
-        </div>
+        </section>
       </div>
     </div>
   );
 };
+
+interface GlassButtonProps {
+  icon: React.ReactNode;
+  label: string;
+  desc: string;
+  onClick: () => void;
+}
+
+function GlassButton({ icon, label, desc, onClick }: GlassButtonProps) {
+  return (
+    <button
+      className="relative z-10 bg-white/20 backdrop-blur-lg rounded-xl p-6 border border-white/30 shadow-2xl transition-transform hover:scale-105 flex flex-col items-center text-center"
+      onClick={onClick}
+    >
+      <div className="mb-4">{icon}</div>
+      <h4 className="text-lg font-bold mb-2">{label}</h4>
+      <p className="text-white/80 text-sm">{desc}</p>
+    </button>
+  );
+}
 
 export default LandingPage;

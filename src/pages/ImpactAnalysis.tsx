@@ -17,10 +17,7 @@ export default function ImpactAnalysis() {
       .then((data) => setApod(data));
 
     // Show intro dialog if not dismissed before
-    const dismissed = localStorage.getItem("impactAnalysisIntroDismissed");
-    if (!dismissed) {
-      setShowIntro(true);
-    }
+    setShowIntro(true);
   }, []);
 
   const closeIntro = () => {

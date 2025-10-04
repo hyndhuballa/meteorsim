@@ -116,10 +116,7 @@ export default function AftermathVisualization() {
   const [showIntro, setShowIntro] = useState(false);
 
   useEffect(() => {
-    const dismissed = localStorage.getItem("aftermathVisualizationIntroDismissed");
-    if (!dismissed) {
-      setShowIntro(true);
-    }
+    setShowIntro(true);
   }, []);
 
   const closeIntro = () => {

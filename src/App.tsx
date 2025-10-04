@@ -644,7 +644,8 @@ const App: React.FC = () => {
         <Route path="/" element={<Landing />} />
         <Route path="/simulation" element={<MainApp />} />
         <Route path="/scientific-physics" element={<ScientificPhysics />} />
-        <Route path="/earth" element={<EarthView />} />
+        {/* <Route path="/earth" element={<EarthView />} /> */}
+        <Route path="/asteroids" element={<NasaEyesEmbed slug="asteroids" />} />
         <Route path="/live-nasa-data" element={<LiveNASAData />} />
         <Route path="/ai-risk-analyzer" element={<AIRiskAnalyzer />} />
         <Route path="/impact-analysis" element={<ImpactAnalysis />} />
