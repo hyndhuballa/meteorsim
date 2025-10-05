@@ -7,6 +7,7 @@ interface Method {
   title: string;
   icon: string; // backend returns a keyword like "satellite" | "rocket" etc.
   description: string;
+  videoUrl?: string; // added for videos
 }
 
 export default function AftermathVisualization() {
@@ -24,13 +25,58 @@ export default function AftermathVisualization() {
     defense: <AlertTriangle size={36} className="text-orange-400" />,
   };
 
+  // Simulate fetching (replace with your API later)
   useEffect(() => {
     const fetchMethods = async () => {
       setLoading(true);
       try {
-        const res = await fetch("/api/aftermath");
-        if (!res.ok) throw new Error("Failed to fetch aftermath data");
-        const data = await res.json();
+        // Instead of API, directly using static data for now
+        const data = {
+          methods: [
+            {
+              id: 1,
+              title: "Civil Defense",
+              icon: "defense",
+              description: "Protecting population through shelters, evacuation, and emergency planning.",
+              videoUrl: "/videos/civildefence_fixed.mp4",
+            },
+            {
+              id: 2,
+              title: "Early Detection",
+              icon: "satellite",
+              description: "Detecting potential asteroid threats early using telescopes and radar.",
+              videoUrl: "/videos/earlydetection_fixed.mp4",
+            },
+            {
+              id: 3,
+              title: "Gravity Tractor",
+              icon: "shield",
+              description: "Using a spacecraft's gravity to slowly pull the asteroid off course.",
+              videoUrl: "/videos/gravitytractor_fixed.mp4",
+            },
+            {
+              id: 4,
+              title: "Kinetic Impactor",
+              icon: "rocket",
+              description: "Crashing a spacecraft into the asteroid to change its trajectory.",
+              videoUrl: "/videos/kineticimpactor_fixed.mp4",
+            },
+            {
+              id: 5,
+              title: "Laser Ablation",
+              icon: "laser",
+              description: "Firing lasers to vaporize material and push the asteroid via recoil.",
+              videoUrl: "/videos/lazerablation_fixed.mp4",
+            },
+            {
+              id: 6,
+              title: "Nuclear Explosive",
+              icon: "nuclear",
+              description: "Detonating a nuclear device near the asteroid to deflect or disrupt it.",
+              videoUrl: "/videos/nuclearexplosive_fixed.mp4",
+            },
+          ],
+        };
         setMethods(data.methods);
       } catch (err) {
         console.error("Failed to load mitigation methods:", err);
@@ -43,20 +89,11 @@ export default function AftermathVisualization() {
 
   // Format description text
   const formatDescription = (text: string) => {
-    return text.split("\n").map((line, i) => {
-      if (/^[\u2600-\u27BF\ufe0f\u{1F300}-\u{1FAFF}]/u.test(line)) {
-        return (
-          <p key={i} className="mt-3 text-yellow-400 font-semibold">
-            {line}
-          </p>
-        );
-      }
-      return (
-        <p key={i} className="text-gray-200 text-sm leading-relaxed">
-          {line}
-        </p>
-      );
-    });
+    return text.split("\n").map((line, i) => (
+      <p key={i} className="text-gray-200 text-sm leading-relaxed">
+        {line}
+      </p>
+    ));
   };
 
   return (
@@ -103,11 +140,24 @@ export default function AftermathVisualization() {
               <h2 className="text-2xl font-bold mt-3 text-yellow-400">
                 {methods.find((m) => m.id === activeCard)?.title}
               </h2>
+
               <div className="mt-5 text-left space-y-2 max-w-2xl">
-                {formatDescription(
-                  methods.find((m) => m.id === activeCard)?.description || ""
-                )}
+                {formatDescription(methods.find((m) => m.id === activeCard)?.description || "")}
               </div>
+
+              {/* Embedded video */}
+              {methods.find((m) => m.id === activeCard)?.videoUrl && (
+                <video
+                  controls
+                  className="w-full max-w-2xl rounded-lg shadow-lg mt-6"
+                >
+                  <source
+                    src={methods.find((m) => m.id === activeCard)?.videoUrl}
+                    type="video/mp4"
+                  />
+                  Your browser does not support the video tag.
+                </video>
+              )}
             </div>
           </div>
         </div>
