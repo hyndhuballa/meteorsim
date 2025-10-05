@@ -25,9 +25,9 @@ const LandingIntroModal: React.FC<LandingIntroModalProps> = ({
         <p className="mb-4 text-lg text-white/80 text-center">
           Explore asteroid impacts, predict consequences, and test mitigation strategies using real NASA and USGS data. Learn how cosmic events shape Earth and discover ways to protect our planet.
         </p>
-        <div className="mb-4 aspect-w-16 aspect-h-9">
+        <div className="mb-4 aspect-w-16" style={{ height: "400px" }}>
           <iframe
-            src={`https://www.youtube.com/embed/${videoId}`}
+            src={`https://www.youtube.com/embed/z4erspi8gDk`}
             title="Project Demo"
             allowFullScreen
             className="w-full h-full rounded-lg"
